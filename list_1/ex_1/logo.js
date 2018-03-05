@@ -13,6 +13,7 @@ todo:
 []  TODO: movement a rysowanie to różne rzeczy!!!
 []  TODO: double drawing
 []  TODO: right 15 on start
+[]  TODO: move żółwik
 
 krzywa kocha
 
@@ -23,6 +24,9 @@ $(document).ready(function() {
 
   var INITIAL_X_VALUE = 500;
   var INITIAL_Y_VALUE = 500;
+  var NUMBERS_REGEX   = /^[0-9,.]*$/;
+  var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
+
 
   var currentXPosition = INITIAL_X_VALUE;
   var currentYPosition = INITIAL_Y_VALUE;
@@ -35,6 +39,7 @@ $(document).ready(function() {
   var context              = board.getContext("2d");
   var singleCommandsArray  = ["clear", "help", "start"];
   var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background","square"];
+  var tripleCommandsArray  = ["move"];
 
   initialActions();
 
@@ -64,10 +69,15 @@ $(document).ready(function() {
         var value = commandElements[1];
       } else {
         var value   = parseFloat(commandElements[1]);
+        if (command == "move") {
+          var value2 = parseFloat(commandElements[2]);
+        } else {
+          var value2 = null;
+        }
       }
       addTextAndClearInput();
       keepCommandListScrolledOnNewInput();
-      interpretCommand(command, value);
+      interpretCommand(command, value, value2);
     }
   }
 
@@ -90,9 +100,9 @@ $(document).ready(function() {
     var valueRegex;
 
     if (command !== "color" && command !== "background") {
-      valueRegex = /^[0-9,.]*$/;
+      valueRegex = NUMBERS_REGEX;
     } else {
-      valueRegex = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
+      valueRegex = HEX_COLOR_REGEX;
     }
     var isValidValue = valueRegex.test(inputParts[1]);
 
@@ -100,22 +110,31 @@ $(document).ready(function() {
       return true;
     } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && isValidValue) {
       return true;
+    } else if (tripleCommandsArray.includes(command) && inputParts.length == 3) {
+      //TODO: check whether move values are correct
+      return true;
     } else {
       return false;
     }
   }
 
-  function interpretCommand(command, value) {
+  function interpretCommand(command, value, value2) {
+
     oldX = currentXPosition;
     oldY = currentYPosition;
 
     switch(command) {
+
+      case "move":
+        move(value, value2)
+      break;
+
       case "forward":
-          move(value);
+          moveAndDraw(value);
       break;
 
       case "backward":
-        move(-value);
+          moveAndDraw(-value);
       break;
 
       case "right":
@@ -152,7 +171,17 @@ $(document).ready(function() {
     }
   }
 
-  function move(value) {
+  function move(xValue, yValue) {
+    console.log("(" + currentXPosition + "," + currentYPosition + ") => (" + xValue + "," + yValue + ")");
+
+    currentXPosition = xValue;
+    currentYPosition = yValue;
+
+    context.moveTo(xValue, yValue);
+
+  }
+
+  function moveAndDraw(value) {
 
     if (currentAngle === 0) {
 
@@ -271,32 +300,32 @@ $(document).ready(function() {
   function createTriangle(value, colorHexValue) {
     // changeStrokeColor(colorHexValue)
     computeAngle(60);
-    move(value);
+    moveAndDraw(value);
     computeAngle(60);
-    move(value);
+    moveAndDraw(value);
     computeAngle(60);
-    move(value);
+    moveAndDraw(value);
   }
 
   function createSquare(value, colorHexValue) {
     // changeStrokeColor(colorHexValue)
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
   }
 
   function createRectangle() {
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
-    move(value);
+    moveAndDraw(value);
     computeAngle(90);
   }
 });
