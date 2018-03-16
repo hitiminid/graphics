@@ -12,8 +12,9 @@ todo:
 []  TODO: clear doesn't really deletes all objects on canvas (they are restored when new command is given)
 []  TODO: movement a rysowanie to różne rzeczy!!!
 []  TODO: double drawing
-[]  TODO: right 15 on start
+[x] TODO: right 15 on start
 []  TODO: move żółwik
+[]  TODO: exceed bounds
 
 krzywa kocha
 
@@ -21,16 +22,6 @@ forward x
 */
 
 $(document).ready(function() {
-
-  var INITIAL_X_VALUE = 500;
-  var INITIAL_Y_VALUE = 500;
-  var NUMBERS_REGEX   = /^[0-9,.]*$/;
-  var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
-
-
-  var currentXPosition = INITIAL_X_VALUE;
-  var currentYPosition = INITIAL_Y_VALUE;
-  var currentAngle     = 0.0;
 
   var commandCounter       = 0;
   var sendButton           = document.getElementById("send-button");
@@ -40,6 +31,18 @@ $(document).ready(function() {
   var singleCommandsArray  = ["clear", "help", "start"];
   var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background","square"];
   var tripleCommandsArray  = ["move"];
+
+  var CANVAS_HEIGHT  = board.height;
+  var CANVAS_WIDTH   = board.width;
+  var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
+  var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
+  var NUMBERS_REGEX   = /^[0-9,.]*$/;
+  var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
+
+  var currentXPosition = INITIAL_X_VALUE;
+  var currentYPosition = INITIAL_Y_VALUE;
+  var currentAngle     = 0.0;
+
 
   initialActions();
 
@@ -178,7 +181,6 @@ $(document).ready(function() {
     currentYPosition = yValue;
 
     context.moveTo(xValue, yValue);
-
   }
 
   function moveAndDraw(value) {
@@ -189,25 +191,17 @@ $(document).ready(function() {
       currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
-      // console.log("(0;90)");
 
       var xTranslation = value * cos(currentAngle);
       var yTranslation = value * sin(currentAngle);
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
-      // console.log("before x = ", currentXPosition, " before y = ", currentYPosition);
-      // console.log("move x = ", xTranslation, " move y = ", yTranslation);
-      // console.log("x = ", currentXPosition, " y = ", currentYPosition);
-
     } else if (currentAngle === 90) {
 
       currentXPosition += value;
-      // currentYPosition = currentYPosition;
-      // context.lineTo(currentXPosition, currentYPosition);
 
     } else if (currentAngle > 90 && currentAngle < 180) {
-        //TODO: WRONG
         var xTranslation = value * cos(currentAngle);
         var yTranslation = value * sin(currentAngle);
         currentXPosition += Math.abs(xTranslation);
@@ -238,8 +232,21 @@ $(document).ready(function() {
     }
 
     console.log("("+ oldX + "," + oldY + ") => (" + currentXPosition + "," + currentYPosition + ")");
+
+    currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
+    currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
+
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
+  }
+
+  function checkIfBoundsAreExceeded(value, maxValue) {
+    if (value >= maxValue) {
+      value = maxValue;
+    } else if (value <= 0.0) {
+      value = 0.0
+    }
+    return value;
   }
 
   function changeStrokeColor(colorHexValue) {
@@ -249,7 +256,7 @@ $(document).ready(function() {
   function changeBackgroundColor(colorHexValue) {
     bgColor = colorHexValue;
     context.fillStyle = colorHexValue;
-    context.fillRect(0,0, context.canvas.width, context.canvas.height );
+    context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 
   function start() {
@@ -262,17 +269,17 @@ $(document).ready(function() {
   }
 
   function computeX(context, x) {
-    return (x-rminx) / (rmaxx-rminx)*(context.canvas.width);
+    return (x-rminx) / (rmaxx-rminx)*(CANVAS_WIDTH);
   }
 
   function computeY(context, y) {
-    return context.canvas.height-(y-rminy)/(rmaxy-rminy)*(context.canvas.height);
+    return CANVAS_HEIGHT-(y-rminy)/(rmaxy-rminy)*(CANVAS_HEIGHT);
   }
 
   function clearScreen(context, bgColorString) {
     context.globalCompositeOperation ="source-over";
     context.fillStyle = bgColorString;
-    context.fillRect(0,0, context.canvas.width, context.canvas.height );
+    context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT );
   }
 
   // here it will be passed as a -90 or 90 depending on a fact whether we use right or left
@@ -337,5 +344,9 @@ $(document).ready(function() {
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
+  }
+
+  function between(number, min, max) {
+    return number >= min && number <= max;
   }
 });
