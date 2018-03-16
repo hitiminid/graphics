@@ -185,14 +185,20 @@ $(document).ready(function() {
 
     if (currentAngle === 0) {
 
-      currentXPosition = currentXPosition;
-      currentYPosition = currentYPosition - value;
+      currentXPosition =  currentXPosition;
+      currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
-      console.log("(0;90)");
+      // console.log("(0;90)");
 
-      currentXPosition += value * cos(currentAngle);
-      currentYPosition -= value * sin(currentAngle);
+      var xTranslation = value * cos(currentAngle);
+      var yTranslation = value * sin(currentAngle);
+      currentXPosition += Math.abs(xTranslation);
+      currentYPosition -= Math.abs(yTranslation);
+
+      // console.log("before x = ", currentXPosition, " before y = ", currentYPosition);
+      // console.log("move x = ", xTranslation, " move y = ", yTranslation);
+      // console.log("x = ", currentXPosition, " y = ", currentYPosition);
 
     } else if (currentAngle === 90) {
 
@@ -202,8 +208,10 @@ $(document).ready(function() {
 
     } else if (currentAngle > 90 && currentAngle < 180) {
         //TODO: WRONG
-        currentXPosition += value * cos(currentAngle);
-        currentYPosition += value * sin(currentAngle);
+        var xTranslation = value * cos(currentAngle);
+        var yTranslation = value * sin(currentAngle);
+        currentXPosition += Math.abs(xTranslation);
+        currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 180) {
 
@@ -211,6 +219,10 @@ $(document).ready(function() {
 
     } else if (currentAngle > 180 && currentAngle < 270) {
 
+      var xTranslation = value * cos(currentAngle);
+      var yTranslation = value * sin(currentAngle);
+      currentXPosition -= Math.abs(xTranslation);
+      currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 270) {
 
@@ -218,14 +230,12 @@ $(document).ready(function() {
 
     } else if (currentAngle > 270 && currentAngle < 360) {
 
+      var xTranslation = value * cos(currentAngle);
+      var yTranslation = value * sin(currentAngle);
+      currentXPosition -= Math.abs(xTranslation);
+      currentYPosition -= Math.abs(yTranslation);
+
     }
-
-
-    // var image = new Image();
-    // image.onload = function(){
-    //   context.drawImage(image, currentXPosition - 20,currentYPosition);
-    // };
-    // image.src = "wrr.png";
 
     console.log("("+ oldX + "," + oldY + ") => (" + currentXPosition + "," + currentYPosition + ")");
     context.lineTo(currentXPosition, currentYPosition);
