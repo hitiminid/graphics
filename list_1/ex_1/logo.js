@@ -15,10 +15,7 @@ todo:
 [x] TODO: right 15 on start
 []  TODO: move żółwik
 []  TODO: exceed bounds
-
 krzywa kocha
-
-forward x
 */
 
 $(document).ready(function() {
@@ -42,7 +39,6 @@ $(document).ready(function() {
   var currentXPosition = INITIAL_X_VALUE;
   var currentYPosition = INITIAL_Y_VALUE;
   var currentAngle     = 0.0;
-
 
   initialActions();
 
@@ -291,11 +287,7 @@ $(document).ready(function() {
       newValue = naiveValue % 360;
     }
     currentAngle =+ newValue;
-    console.log(currentAngle);
-  }
-
-  function computeBoundsOverflow() {
-    //TODO: behavior when canvas bounds are exceeded
+    // console.log(currentAngle);
   }
 
   function filterArrayFromWhiteSpaces(array) {
