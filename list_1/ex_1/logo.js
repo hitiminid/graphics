@@ -9,7 +9,6 @@ todo:
 []  TODO: ta sama wielkosc canvasa na X jak i na Y (nie mozna zrobic kwadratu)
 []  TODO: double drawing
 [x] TODO: right 15 on start
-[]  TODO: move żółwik
 krzywa kocha
 */
 
@@ -21,8 +20,9 @@ $(document).ready(function() {
   var board                = document.getElementById("board");
   var context              = board.getContext("2d");
   var singleCommandsArray  = ["clear", "help", "start"];
-  var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background","square"];
-  var tripleCommandsArray  = ["move"];
+  var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background"];
+  var tripleCommandsArray  = ["move", "square", "circle", "triangle"];
+  var strokeColor          = "#000";
 
   var CANVAS_HEIGHT  = board.height;
   var CANVAS_WIDTH   = board.width;
@@ -165,7 +165,15 @@ $(document).ready(function() {
       break;
 
       case "square":
-        createSquare(value, 0);
+        createSquare(value, value2);
+      break;
+
+      case "circle":
+        createCircle(value, value2);
+      break;
+
+      case "triangle":
+        createTriangle(value, value2);
       break;
     }
   }
@@ -181,6 +189,8 @@ $(document).ready(function() {
 
   function moveAndDraw(value) {
 
+    oldX = currentXPosition;
+    oldY = currentYPosition;
     if (currentAngle === 0) {
 
       currentXPosition =  currentXPosition;
@@ -232,8 +242,11 @@ $(document).ready(function() {
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
 
+    context.beginPath();
+    context.moveTo(oldX, oldY);
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
+    context.closePath();
   }
 
   function checkIfBoundsAreExceeded(value, maxValue) {
@@ -247,6 +260,7 @@ $(document).ready(function() {
 
   function changeStrokeColor(colorHexValue) {
     context.strokeStyle = colorHexValue;
+    strokeColor = colorHexValue;
   }
 
   function changeBackgroundColor(colorHexValue) {
@@ -275,7 +289,7 @@ $(document).ready(function() {
   function clearScreen(context, bgColorString) {
     context.globalCompositeOperation ="source-over";
     context.fillStyle = bgColorString;
-    context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT );
+    context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 
   // here it will be passed as a -90 or 90 depending on a fact whether we use right or left
@@ -287,7 +301,6 @@ $(document).ready(function() {
       newValue = naiveValue % 360;
     }
     currentAngle =+ newValue;
-    // console.log(currentAngle);
   }
 
   function filterArrayFromWhiteSpaces(array) {
@@ -300,24 +313,29 @@ $(document).ready(function() {
     return filteredArray;
   }
 
-  function createCircle(radius) {
+  function createCircle(radius, colorHexValue) {
+    console.log(colorHexValue)
+    changeStrokeColor(colorHexValue)
     context.beginPath();
-    context.arc(100,75,radius,0,2*Math.PI);
+    context.arc(currentXPosition,currentYPosition,radius,0,2*Math.PI);
     context.stroke();
+    context.closePath();
+    changeStrokeColor(strokeColor);
   }
 
   function createTriangle(value, colorHexValue) {
-    // changeStrokeColor(colorHexValue)
-    computeAngle(60);
+    changeStrokeColor(colorHexValue)
     moveAndDraw(value);
-    computeAngle(60);
+    computeAngle(90);
     moveAndDraw(value);
-    computeAngle(60);
-    moveAndDraw(value);
+    computeAngle(170);
+    moveAndDraw(value * Math.sqrt(2));
+    computeAngle(135);
+    changeStrokeColor(strokeColor);
   }
 
   function createSquare(value, colorHexValue) {
-    // changeStrokeColor(colorHexValue)
+    changeStrokeColor(colorHexValue)
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
@@ -325,9 +343,11 @@ $(document).ready(function() {
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
+    changeStrokeColor(strokeColor);
   }
 
   function createRectangle() {
+    changeStrokeColor(colorHexValue)
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
@@ -336,6 +356,7 @@ $(document).ready(function() {
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
+    changeStrokeColor(strokeColor);
   }
 
   function between(number, min, max) {
@@ -359,8 +380,7 @@ $(document).ready(function() {
     // public static void koch(Turtle t, int n, double size) {
     // if(n==0)
     //     t.forward(size);
-    // else
-    // {
+    // else {
     //     koch(t, n-1, size);
     //     t.left(60);
     //     koch(t, n-1, size);
