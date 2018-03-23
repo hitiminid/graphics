@@ -4,22 +4,17 @@ var bgColor = "#F1F1F1";
 
 /*
 todo:
-[]  TODO: zdjecie
 []  TODO: odwrocone osie - Y rosnie do gory, X w prawo
 [X] TODO: backward
-[]  TODO: initial value should be in the middle of a screen
 []  TODO: ta sama wielkosc canvasa na X jak i na Y (nie mozna zrobic kwadratu)
-[]  TODO: clear doesn't really deletes all objects on canvas (they are restored when new command is given)
-[]  TODO: movement a rysowanie to różne rzeczy!!!
 []  TODO: double drawing
 [x] TODO: right 15 on start
 []  TODO: move żółwik
-[]  TODO: exceed bounds
 krzywa kocha
 */
 
-$(document).ready(function() {
 
+$(document).ready(function() {
   var commandCounter       = 0;
   var sendButton           = document.getElementById("send-button");
   var inputField           = document.getElementById("input-field");
@@ -39,6 +34,11 @@ $(document).ready(function() {
   var currentXPosition = INITIAL_X_VALUE;
   var currentYPosition = INITIAL_Y_VALUE;
   var currentAngle     = 0.0;
+  var MINIMUM_X = 0;
+  var MINIMUM_Y = 0
+
+  var MAXIMUM_X = 2500;
+  var MAXIMUM_Y = 2500;
 
   initialActions();
 
@@ -227,7 +227,7 @@ $(document).ready(function() {
 
     }
 
-    console.log("("+ oldX + "," + oldY + ") => (" + currentXPosition + "," + currentYPosition + ")");
+    // console.log("("+ oldX + "," + oldY + ") => (" + currentXPosition + "," + currentYPosition + ")");
 
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
@@ -265,11 +265,11 @@ $(document).ready(function() {
   }
 
   function computeX(context, x) {
-    return (x-rminx) / (rmaxx-rminx)*(CANVAS_WIDTH);
+    return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
   }
 
   function computeY(context, y) {
-    return CANVAS_HEIGHT-(y-rminy)/(rmaxy-rminy)*(CANVAS_HEIGHT);
+    return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y)*(CANVAS_HEIGHT);
   }
 
   function clearScreen(context, bgColorString) {
@@ -341,4 +341,37 @@ $(document).ready(function() {
   function between(number, min, max) {
     return number >= min && number <= max;
   }
+
+  function koch(n, size) {
+    if (n == 0) {
+      moveAndDraw(size);
+    } else {
+      koch(n-1, size);
+      computeAngle(-60.0);
+      koch(n-1, size);
+      computeAngle(120.0);
+      koch(n-1, size);
+      computeAngle(-60.0);
+      koch(n-1, size);
+    }
+  }
+
+    // public static void koch(Turtle t, int n, double size) {
+    // if(n==0)
+    //     t.forward(size);
+    // else
+    // {
+    //     koch(t, n-1, size);
+    //     t.left(60);
+    //     koch(t, n-1, size);
+    //     t.right(120);
+    //     koch(t, n-1, size);
+    //     t.left(60);
+    //     koch(t, n-1, size);
+    // }
+
+    koch_f = function(a,b) {
+      koch(a,b);
+    }
+
 });

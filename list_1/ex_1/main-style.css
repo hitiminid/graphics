@@ -5,13 +5,13 @@
 }
 
 #board {
-  flex: 4;
+  /* flex: 4; */
   background-color: #f1f1f1;
   border: 2px black solid;
 }
 
 #command-field {
-  flex: 1;
+  /* flex: 1; */
   background-color: blue;
 }
 
