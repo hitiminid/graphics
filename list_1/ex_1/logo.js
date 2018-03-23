@@ -5,13 +5,11 @@ var bgColor = "#F1F1F1";
 /*
 todo:
 []  TODO: odwrocone osie - Y rosnie do gory, X w prawo
-[X] TODO: backward
-[]  TODO: ta sama wielkosc canvasa na X jak i na Y (nie mozna zrobic kwadratu)
+[]  TODO: skala
 []  TODO: double drawing
 [x] TODO: right 15 on start
 krzywa kocha
 */
-
 
 $(document).ready(function() {
   var commandCounter       = 0;
@@ -64,8 +62,13 @@ $(document).ready(function() {
     if (validateInput(input)) {
       var commandElements = filterArrayFromWhiteSpaces((input).split(" "));
       var command = commandElements[0];
+
       if (command === "color" || command === "background") { //the only command that requires string as a parameter is color (color "F1F1F1")
         var value = commandElements[1];
+        console.log("console", typeof value)
+      } else if (command == "circle") {
+        var value  = commandElements[1];
+        var value2 = commandElements[2].toString();
       } else {
         var value   = parseFloat(commandElements[1]);
         if (command == "move") {
@@ -74,6 +77,7 @@ $(document).ready(function() {
           var value2 = null;
         }
       }
+
       addTextAndClearInput();
       keepCommandListScrolledOnNewInput();
       interpretCommand(command, value, value2);
@@ -169,7 +173,9 @@ $(document).ready(function() {
       break;
 
       case "circle":
-        createCircle(value, value2);
+        console.log(typeof parseFloat(value))
+        console.log(typeof value2)
+        createCircle(parseFloat(value), value2);
       break;
 
       case "triangle":
@@ -237,8 +243,6 @@ $(document).ready(function() {
 
     }
 
-    // console.log("("+ oldX + "," + oldY + ") => (" + currentXPosition + "," + currentYPosition + ")");
-
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
 
@@ -274,7 +278,7 @@ $(document).ready(function() {
   }
 
   function showHelp() {
-    var guide = "1. To move forward use 'forward [value]' <br>2. To move backward use 'backward [value]'<br>3. To rotate clockwise use 'right [value]', counter clockwise - 'left [value]'."
+    var guide = "1. To move forward use 'forward [value]' <br>2. To move backward use 'backward [value]'<br>3. To rotate clockwise use 'right [value]', <br>counter clockwise - 'left [value]'."
     $("#commands-list").append("<p>" + guide + "</p>")
   }
 
@@ -314,13 +318,13 @@ $(document).ready(function() {
   }
 
   function createCircle(radius, colorHexValue) {
-    console.log(colorHexValue)
-    changeStrokeColor(colorHexValue)
+    console.log("hex", colorHexValue);
+    changeStrokeColor("#" + colorHexValue.toString());
     context.beginPath();
-    context.arc(currentXPosition,currentYPosition,radius,0,2*Math.PI);
+    context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
     context.stroke();
     context.closePath();
-    changeStrokeColor(strokeColor);
+    // changeStrokeColor(strokeColor);
   }
 
   function createTriangle(value, colorHexValue) {
