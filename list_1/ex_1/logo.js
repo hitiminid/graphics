@@ -6,8 +6,10 @@ var bgColor = "#F1F1F1";
 todo:
 []  TODO: odwrocone osie - Y rosnie do gory, X w prawo
 []  TODO: skala
+[]  TODO: odwrcconso
 []  TODO: double drawing
 [x] TODO: right 15 on start
+[ ] TODO: dlugi hex przechodzi walidacje
 krzywa kocha
 */
 
@@ -19,8 +21,9 @@ $(document).ready(function() {
   var context              = board.getContext("2d");
   var singleCommandsArray  = ["clear", "help", "start"];
   var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background"];
-  var tripleCommandsArray  = ["move", "square", "circle", "triangle"];
+  var tripleCommandsArray  = ["move", "square", "circle", "triangle", "koch"];
   var strokeColor          = "#000";
+  var shapesArray          = ["square", "circle", "triangle"];
 
   var CANVAS_HEIGHT  = board.height;
   var CANVAS_WIDTH   = board.width;
@@ -65,14 +68,17 @@ $(document).ready(function() {
 
       if (command === "color" || command === "background") { //the only command that requires string as a parameter is color (color "F1F1F1")
         var value = commandElements[1];
-        console.log("console", typeof value)
-      } else if (command == "circle") {
+        // console.log("console", typeof value)
+      } else if (contains(shapesArray, command)) {
+      // } else if (command == "circle") {
         var value  = commandElements[1];
+        // console.log(123)
         var value2 = commandElements[2].toString();
       } else {
         var value   = parseFloat(commandElements[1]);
-        if (command == "move") {
+        if (command == "move" || command == "koch") {
           var value2 = parseFloat(commandElements[2]);
+          console.log(value2);
         } else {
           var value2 = null;
         }
@@ -101,17 +107,21 @@ $(document).ready(function() {
     inputParts = filterArrayFromWhiteSpaces(inputParts);
     var command = inputParts[0];
     var valueRegex;
+    console.log(inputParts.length);
 
-    if (command !== "color" && command !== "background") {
+    if (command !== "color" && command !== "background" && command !== "circle" && command !== "square" && command !== "rectangle") {
       valueRegex = NUMBERS_REGEX;
     } else {
       valueRegex = HEX_COLOR_REGEX;
     }
     var isValidValue = valueRegex.test(inputParts[1]);
+    console.log(123);
 
     if (singleCommandsArray.includes(command) && inputParts.length == 1) {
       return true;
-    } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && isValidValue) {
+    } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && (isValidValue || command =="koch")) {
+      console.log(123);
+
       return true;
     } else if (tripleCommandsArray.includes(command) && inputParts.length == 3) {
       //TODO: check whether move values are correct
@@ -156,6 +166,10 @@ $(document).ready(function() {
         showHelp();
       break;
 
+      case "koch":
+        koch(value, value2);
+      break;
+
       case "start":
         start();
       break;
@@ -173,8 +187,6 @@ $(document).ready(function() {
       break;
 
       case "circle":
-        console.log(typeof parseFloat(value))
-        console.log(typeof value2)
         createCircle(parseFloat(value), value2);
       break;
 
@@ -319,7 +331,7 @@ $(document).ready(function() {
 
   function createCircle(radius, colorHexValue) {
     console.log("hex", colorHexValue);
-    changeStrokeColor("#" + colorHexValue.toString());
+    changeStrokeColor(colorHexValue.toString());
     context.beginPath();
     context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
     context.stroke();
@@ -379,6 +391,16 @@ $(document).ready(function() {
       computeAngle(-60.0);
       koch(n-1, size);
     }
+  }
+
+  function contains(array, value) {
+    var numberOfElements = array.length;
+    for (i = 0; i < numberOfElements; i++) {
+      if (array[i] === value) {
+        return true;
+      }
+    }
+    return false;
   }
 
     // public static void koch(Turtle t, int n, double size) {
