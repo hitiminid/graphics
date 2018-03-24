@@ -4,10 +4,10 @@ var bgColor = "#F1F1F1";
 
 /*
 todo:
-[]  TODO: odwrocone osie - Y rosnie do gory, X w prawo
+[]  TODO: odwrocone osie - Y rosnie do gory, X w prawo ???
+[]  TODO: bugi w poruszaniu po skosie
 []  TODO: skala
-[ ] TODO: dlugi hex przechodzi walidacje
-krzywa kocha
+[]  TODO: krzywa kocha
 */
 
 $(document).ready(function() {
@@ -65,11 +65,8 @@ $(document).ready(function() {
 
       if (command === "color" || command === "background") { //the only command that requires string as a parameter is color (color "F1F1F1")
         var value = commandElements[1];
-        // console.log("console", typeof value)
       } else if (contains(shapesArray, command)) {
-      // } else if (command == "circle") {
         var value  = commandElements[1];
-        // console.log(123)
         var value2 = commandElements[2].toString();
       } else {
         var value   = parseFloat(commandElements[1]);
@@ -114,7 +111,6 @@ $(document).ready(function() {
 
     var isValidValue = valueRegex.test(inputParts[1]);
     var colorValueValidation;
-    // console.log(123);
     if (shapesArray.includes(command)) {
       colorValueValidation = valueRegex.test(inputParts[2]);
     }
@@ -205,9 +201,10 @@ $(document).ready(function() {
     console.log("(" + currentXPosition + "," + currentYPosition + ") => (" + xValue + "," + yValue + ")");
 
     currentXPosition = xValue;
-    currentYPosition = yValue;
+    currentYPosition = 900 - yValue;
 
-    context.moveTo(xValue, yValue);
+
+    context.moveTo(xValue, 900 - yValue);
   }
 
   function moveAndDraw(value) {
@@ -279,9 +276,11 @@ $(document).ready(function() {
     return value;
   }
 
-  function changeStrokeColor(colorHexValue) {
+  function changeStrokeColor(colorHexValue, changeGlobalColor) {
     context.strokeStyle = colorHexValue;
-    strokeColor = colorHexValue;
+    if (changeGlobalColor) {
+      strokeColor = colorHexValue;
+    }
   }
 
   function changeBackgroundColor(colorHexValue) {
@@ -315,6 +314,7 @@ $(document).ready(function() {
 
   // here it will be passed as a -90 or 90 depending on a fact whether we use right or left
   function computeAngle(value) {
+    console.log(value, typeof value)
     naiveValue = currentAngle + value;
     if (naiveValue < 0) {
       newValue = 360 + naiveValue;
@@ -336,23 +336,23 @@ $(document).ready(function() {
 
   function createCircle(radius, colorHexValue) {
     console.log("hex", colorHexValue);
-    changeStrokeColor(colorHexValue.toString());
+    changeStrokeColor(colorHexValue.toString(), false);
     context.beginPath();
     context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
     context.stroke();
     context.closePath();
-    // changeStrokeColor(strokeColor);
+    changeStrokeColor(strokeColor, true);
   }
 
   function createTriangle(value, colorHexValue) {
-    changeStrokeColor(colorHexValue)
+    changeStrokeColor(colorHexValue, false)
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(170);
     moveAndDraw(value * Math.sqrt(2));
     computeAngle(135);
-    changeStrokeColor(strokeColor);
+    changeStrokeColor(strokeColor, true);
   }
 
   function createSquare(value, colorHexValue) {
@@ -368,7 +368,7 @@ $(document).ready(function() {
   }
 
   function createRectangle() {
-    changeStrokeColor(colorHexValue)
+    changeStrokeColor(colorHexValue, false)
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
@@ -377,7 +377,7 @@ $(document).ready(function() {
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
-    changeStrokeColor(strokeColor);
+    changeStrokeColor(strokeColor, true);
   }
 
   function between(number, min, max) {
@@ -407,7 +407,6 @@ $(document).ready(function() {
     }
     return false;
   }
-
     // public static void koch(Turtle t, int n, double size) {
     // if(n==0)
     //     t.forward(size);
@@ -420,9 +419,7 @@ $(document).ready(function() {
     //     t.left(60);
     //     koch(t, n-1, size);
     // }
-
     koch_f = function(a,b) {
       koch(a,b);
     }
-
 });
