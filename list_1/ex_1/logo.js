@@ -6,9 +6,6 @@ var bgColor = "#F1F1F1";
 todo:
 []  TODO: odwrocone osie - Y rosnie do gory, X w prawo
 []  TODO: skala
-[]  TODO: odwrcconso
-[]  TODO: double drawing
-[x] TODO: right 15 on start
 [ ] TODO: dlugi hex przechodzi walidacje
 krzywa kocha
 */
@@ -114,17 +111,25 @@ $(document).ready(function() {
     } else {
       valueRegex = HEX_COLOR_REGEX;
     }
+
     var isValidValue = valueRegex.test(inputParts[1]);
-    console.log(123);
+    var colorValueValidation;
+    // console.log(123);
+    if (shapesArray.includes(command)) {
+      colorValueValidation = valueRegex.test(inputParts[2]);
+    }
 
     if (singleCommandsArray.includes(command) && inputParts.length == 1) {
       return true;
     } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && (isValidValue || command =="koch")) {
-      console.log(123);
+      // console.log(123);
 
       return true;
     } else if (tripleCommandsArray.includes(command) && inputParts.length == 3) {
       //TODO: check whether move values are correct
+      if (contains(shapesArray, command) && !colorValueValidation) {
+        return false;
+      }
       return true;
     } else {
       return false;
@@ -183,7 +188,7 @@ $(document).ready(function() {
       break;
 
       case "square":
-        createSquare(value, value2);
+        createSquare(parseFloat(value), value2);
       break;
 
       case "circle":
@@ -191,7 +196,7 @@ $(document).ready(function() {
       break;
 
       case "triangle":
-        createTriangle(value, value2);
+        createTriangle(parseFloat(value), value2);
       break;
     }
   }
