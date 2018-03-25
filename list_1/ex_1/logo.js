@@ -7,6 +7,7 @@ todo:
 []  TODO: odwrocone osie - Y rosnie do gory, X w prawo ???
 []  TODO: bugi w poruszaniu po skosie
 []  TODO: skala
+[]  TODO: wyswietl zółwia
 []  TODO: krzywa kocha
 */
 
@@ -22,8 +23,12 @@ $(document).ready(function() {
   var strokeColor          = "#000";
   var shapesArray          = ["square", "circle", "triangle"];
 
+  // var CANVAS_HEIGHT  = 5000;
   var CANVAS_HEIGHT  = board.height;
+  // console.log(CANVAS_HEIGHT)
+  // var CANVAS_WIDTH   = 5000;
   var CANVAS_WIDTH   = board.width;
+  // console.log(CANVAS_WIDTH)
   var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
   var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
@@ -62,19 +67,19 @@ $(document).ready(function() {
     if (validateInput(input)) {
       var commandElements = filterArrayFromWhiteSpaces((input).split(" "));
       var command = commandElements[0];
+      var value  = null;
+      var value2 = null;
 
       if (command === "color" || command === "background") { //the only command that requires string as a parameter is color (color "F1F1F1")
-        var value = commandElements[1];
+        value = commandElements[1];
       } else if (contains(shapesArray, command)) {
-        var value  = commandElements[1];
-        var value2 = commandElements[2].toString();
+        value  = commandElements[1];
+        value2 = commandElements[2].toString();
       } else {
-        var value   = parseFloat(commandElements[1]);
+        value   = parseFloat(commandElements[1]);
         if (command == "move" || command == "koch") {
-          var value2 = parseFloat(commandElements[2]);
+          value2 = parseFloat(commandElements[2]);
           console.log(value2);
-        } else {
-          var value2 = null;
         }
       }
 
@@ -101,7 +106,7 @@ $(document).ready(function() {
     inputParts = filterArrayFromWhiteSpaces(inputParts);
     var command = inputParts[0];
     var valueRegex;
-    console.log(inputParts.length);
+    // console.log(inputParts.length);
 
     if (command !== "color" && command !== "background" && command !== "circle" && command !== "square" && command !== "rectangle") {
       valueRegex = NUMBERS_REGEX;
@@ -118,8 +123,6 @@ $(document).ready(function() {
     if (singleCommandsArray.includes(command) && inputParts.length == 1) {
       return true;
     } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && (isValidValue || command =="koch")) {
-      // console.log(123);
-
       return true;
     } else if (tripleCommandsArray.includes(command) && inputParts.length == 3) {
       //TODO: check whether move values are correct
@@ -198,13 +201,17 @@ $(document).ready(function() {
   }
 
   function move(xValue, yValue) {
-    console.log("(" + currentXPosition + "," + currentYPosition + ") => (" + xValue + "," + yValue + ")");
+    // console.log("(" + currentXPosition + "," + currentYPosition + ") => (" + xValue + "," + yValue + ")");
 
-    currentXPosition = xValue;
-    currentYPosition = 900 - yValue;
-
-
-    context.moveTo(xValue, 900 - yValue);
+    // currentXPosition = xValue;
+    // currentYPosition = 900 - yValue;
+    // context.moveTo(xValue, 900 - yValue);
+    console.log("from", currentXPosition, currentYPosition);
+    currentXPosition = computeX(xValue);
+    currentYPosition = computeY(yValue);
+    console.log("to", currentXPosition,  currentYPosition)
+    context.moveTo(currentXPosition, currentYPosition);
+    createCircle(10, "#008800");
   }
 
   function moveAndDraw(value) {
@@ -213,7 +220,7 @@ $(document).ready(function() {
     oldY = currentYPosition;
     if (currentAngle === 0) {
 
-      currentXPosition =  currentXPosition;
+      // currentXPosition =  currentXPosition;
       currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
@@ -259,9 +266,13 @@ $(document).ready(function() {
 
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
+    console.log(currentXPosition, " ", currentYPosition)
+    currentXPosition = computeX(currentXPosition)
+    currentYPosition = computeY(currentYPosition)
+    console.log(currentXPosition, " ", currentYPosition)
 
     context.beginPath();
-    context.moveTo(oldX, oldY);
+    context.moveTo(computeX(oldX), computeY(oldY));
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
     context.closePath();
@@ -290,7 +301,7 @@ $(document).ready(function() {
   }
 
   function start() {
-    context.moveTo(currentXPosition, currentYPosition);
+    context.moveTo(computeX(currentXPosition), computeY(currentYPosition));
   }
 
   function showHelp() {
@@ -298,11 +309,11 @@ $(document).ready(function() {
     $("#commands-list").append("<p>" + guide + "</p>")
   }
 
-  function computeX(context, x) {
+  function computeX(x) {
     return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
   }
 
-  function computeY(context, y) {
+  function computeY(y) {
     return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y)*(CANVAS_HEIGHT);
   }
 
