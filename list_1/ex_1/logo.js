@@ -201,37 +201,30 @@ $(document).ready(function() {
   }
 
   function move(xValue, yValue) {
-    // console.log("(" + currentXPosition + "," + currentYPosition + ") => (" + xValue + "," + yValue + ")");
-
-    // currentXPosition = xValue;
-    // currentYPosition = 900 - yValue;
-    // context.moveTo(xValue, 900 - yValue);
-    console.log("from", currentXPosition, currentYPosition);
     currentXPosition = computeX(xValue);
     currentYPosition = computeY(yValue);
-    console.log("to", currentXPosition,  currentYPosition)
     context.moveTo(currentXPosition, currentYPosition);
     createCircle(10, "#008800");
   }
 
   function moveAndDraw(value) {
-
     oldX = currentXPosition;
     oldY = currentYPosition;
-    if (currentAngle === 0) {
 
-      // currentXPosition =  currentXPosition;
+    if (currentAngle === 0) {
+      value = CANVAS_HEIGHT - computeY(value);
       currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
       var xTranslation = value * cos(currentAngle);
       var yTranslation = value * sin(currentAngle);
+
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
     } else if (currentAngle === 90) {
-
+      value = computeX(value);
       currentXPosition += value;
 
     } else if (currentAngle > 90 && currentAngle < 180) {
@@ -241,6 +234,8 @@ $(document).ready(function() {
         currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 180) {
+
+      value = CANVAS_HEIGHT - computeY(value);
 
       currentYPosition += value;
 
@@ -253,7 +248,8 @@ $(document).ready(function() {
 
     } else if (currentAngle === 270) {
 
-      currentXPosition -= value ;
+      value = computeX(value);
+      currentXPosition -= value;
 
     } else if (currentAngle > 270 && currentAngle < 360) {
 
@@ -263,19 +259,27 @@ $(document).ready(function() {
       currentYPosition -= Math.abs(yTranslation);
 
     }
+    //TODO: check a case when bounds are exceeded
 
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
-    console.log(currentXPosition, " ", currentYPosition)
-    currentXPosition = computeX(currentXPosition)
-    currentYPosition = computeY(currentYPosition)
-    console.log(currentXPosition, " ", currentYPosition)
+
+    // console.log(currentXPosition, currentYPosition)
+    // currentXPosition = computeX(currentXPosition)
+    // currentYPosition = computeY(currentYPosition)
+    // console.log("after", currentXPosition, currentYPosition)
+
+    console.log("from", oldX, oldY);
+    console.log("to",   currentXPosition, currentYPosition);
 
     context.beginPath();
-    context.moveTo(computeX(oldX), computeY(oldY));
+    context.moveTo(oldX, oldY);
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
     context.closePath();
+  }
+
+  function checkDirectionAndMapMovementValue(value) {
   }
 
   function checkIfBoundsAreExceeded(value, maxValue) {
