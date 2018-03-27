@@ -4,7 +4,6 @@ var bgColor = "#F1F1F1";
 
 /*
 todo:
-[]  TODO: odwrocone osie - Y rosnie do gory, X w prawo ???
 []  TODO: bugi w poruszaniu po skosie
 []  TODO: skala
 []  TODO: wyswietl zółwia
@@ -48,7 +47,7 @@ $(document).ready(function() {
   function initialActions() {
     context.moveTo(INITIAL_X_VALUE, INITIAL_Y_VALUE);
     console.log(currentXPosition, currentYPosition);
-    alert('moved to initial place');
+    // alert('moved to initial place');
   }
 
   $("#send-button").bind( "click", function(event) {
@@ -82,7 +81,6 @@ $(document).ready(function() {
           console.log(value2);
         }
       }
-
       addTextAndClearInput();
       keepCommandListScrolledOnNewInput();
       interpretCommand(command, value, value2);
@@ -106,7 +104,6 @@ $(document).ready(function() {
     inputParts = filterArrayFromWhiteSpaces(inputParts);
     var command = inputParts[0];
     var valueRegex;
-    // console.log(inputParts.length);
 
     if (command !== "color" && command !== "background" && command !== "circle" && command !== "square" && command !== "rectangle") {
       valueRegex = NUMBERS_REGEX;
@@ -208,53 +205,85 @@ $(document).ready(function() {
   }
 
   function moveAndDraw(value) {
+    createCircle(10, "#008800");
+
     oldX = currentXPosition;
     oldY = currentYPosition;
 
     if (currentAngle === 0) {
-      value = CANVAS_HEIGHT - computeY(value);
+      // value = CANVAS_HEIGHT - computeY(value);
+      // value = CANVAS_HEIGHT - value;
       currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
-      var xTranslation = value * cos(currentAngle);
-      var yTranslation = value * sin(currentAngle);
+      // console.log(currentAngle)
+      angle = currentAngle;
+      // var xTranslation = value * cos(currentAngle);
+      // var yTranslation = value * sin(currentAngle);
+
+      var xTranslation = value * Math.sin(toRadians(angle));
+      var yTranslation = value * Math.cos(toRadians(angle));
 
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
     } else if (currentAngle === 90) {
-      value = computeX(value);
+
+      // value = computeX(value);
+      // value = (value);
+
       currentXPosition += value;
 
     } else if (currentAngle > 90 && currentAngle < 180) {
-        var xTranslation = value * cos(currentAngle);
-        var yTranslation = value * sin(currentAngle);
+
+        angle = currentAngle - 90;
+        console.log("(90,180)",currentAngle)
+        // var xTranslation = value * Math.sin(currentAngle);
+        // var yTranslation = value * cos(currentAngle);
+
+        var xTranslation = value * Math.cos(toRadians(angle));
+        var yTranslation = value * Math.sin(toRadians(angle));
+
         currentXPosition += Math.abs(xTranslation);
         currentYPosition += Math.abs(yTranslation);
+        console.log("x", xTranslation, "y", yTranslation)
 
     } else if (currentAngle === 180) {
 
-      value = CANVAS_HEIGHT - computeY(value);
+      // value = CANVAS_HEIGHT - computeY(value);
+      // value = CANVAS_HEIGHT - value;
 
       currentYPosition += value;
 
     } else if (currentAngle > 180 && currentAngle < 270) {
+      angle = currentAngle - 180;
 
-      var xTranslation = value * cos(currentAngle);
-      var yTranslation = value * sin(currentAngle);
+      // var xTranslation = value * cos(currentAngle);
+      // var yTranslation = value * sin(currentAngle);
+      // console.log(toRadians(30)),
+      // console.log()
+      var xTranslation = value * Math.sin(toRadians(angle));
+      var yTranslation = value * Math.cos(toRadians(angle));
+
+      console.log("x translate =", xTranslation, "y translate =", yTranslation)
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 270) {
 
-      value = computeX(value);
+      // value = computeX(value);
       currentXPosition -= value;
 
     } else if (currentAngle > 270 && currentAngle < 360) {
 
-      var xTranslation = value * cos(currentAngle);
-      var yTranslation = value * sin(currentAngle);
+      angle = currentAngle - 270;
+      // var xTranslation = value * sin(currentAngle);
+      // var yTranslation = value * cos(currentAngle);
+      //TODO: probably wrong :/
+      var xTranslation = value * Math.cos(toRadians(angle));
+      var yTranslation = value * Math.sin(toRadians(angle));
+
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
@@ -329,14 +358,17 @@ $(document).ready(function() {
 
   // here it will be passed as a -90 or 90 depending on a fact whether we use right or left
   function computeAngle(value) {
-    console.log(value, typeof value)
-    naiveValue = currentAngle + value;
-    if (naiveValue < 0) {
-      newValue = 360 + naiveValue;
-    } else {
-      newValue = naiveValue % 360;
+    currentAngle += value;
+    if (currentAngle <= 0) {
+      while (currentAngle < 0) {
+        currentAngle += 360;
+      }
+    } else if (currentAngle >= 360){
+      while (currentAngle >= 360) {
+        currentAngle -= 360;
+      }
     }
-    currentAngle =+ newValue;
+    console.log("currentAngle", currentAngle)
   }
 
   function filterArrayFromWhiteSpaces(array) {
@@ -371,7 +403,7 @@ $(document).ready(function() {
   }
 
   function createSquare(value, colorHexValue) {
-    changeStrokeColor(colorHexValue)
+    changeStrokeColor(colorHexValue, false)
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
@@ -379,7 +411,7 @@ $(document).ready(function() {
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
-    changeStrokeColor(strokeColor);
+    changeStrokeColor(strokeColor, true);
   }
 
   function createRectangle() {
@@ -422,19 +454,11 @@ $(document).ready(function() {
     }
     return false;
   }
-    // public static void koch(Turtle t, int n, double size) {
-    // if(n==0)
-    //     t.forward(size);
-    // else {
-    //     koch(t, n-1, size);
-    //     t.left(60);
-    //     koch(t, n-1, size);
-    //     t.right(120);
-    //     koch(t, n-1, size);
-    //     t.left(60);
-    //     koch(t, n-1, size);
-    // }
-    koch_f = function(a,b) {
-      koch(a,b);
-    }
+
+  function toDegrees (angle) {
+    return angle * (180 / Math.PI);
+  }
+  function toRadians (angle) {
+    return angle * (Math.PI / 180);
+  }
 });
