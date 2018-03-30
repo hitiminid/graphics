@@ -205,7 +205,7 @@ $(document).ready(function() {
   }
 
   function moveAndDraw(value) {
-    createCircle(10, "#008800");
+    // createCircle(10, "#008800");
 
     oldX = currentXPosition;
     oldY = currentYPosition;
@@ -218,13 +218,15 @@ $(document).ready(function() {
     } else if (currentAngle > 0 && currentAngle < 90) {
 
       // console.log(currentAngle)
-      angle = currentAngle;
+      // angle = currentAngle;
+      angle = 90 - currentAngle;
       // var xTranslation = value * cos(currentAngle);
       // var yTranslation = value * sin(currentAngle);
 
-      var xTranslation = value * Math.sin(toRadians(angle));
-      var yTranslation = value * Math.cos(toRadians(angle));
+      var xTranslation = value * Math.cos(toRadians(angle));
+      var yTranslation = value * Math.sin(toRadians(angle));
 
+      console.log(xTranslation, yTranslation)
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 

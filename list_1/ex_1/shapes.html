@@ -1,26 +1,32 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>Logo</title>
+  <title>Shapes</title>
   <meta charset="UTF-8">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="logo.js"></script>
-  <script src="shapes.js"></script>
+  <script type="text/javascript" src="logo.js"></script>
+  <script type="text/javascript" src="shapes.js"></script>
   <link rel="stylesheet" href="main-style.css">
+  <link rel="stylesheet" href="shapes.css">
 </head>
 
 <body>
   <div id="container">
     <canvas id="board" height="900" width="1600">
     </canvas>
-    <div id="command-field">
-      <div id="commands-list"></div>
-      <div id="input-area">
-        <form>
-          <input id="input-field"/>
-        </form>
-        <button id="send-button">SEND</button>
+    <div id="creation-field">
+      <div id="inner">
+          <select id="shape-select">
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+            <option value="circle">Circle</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="trapezoid">Trapezoid</option>
+          </select>
+          <form><input id="input-field"/></form>
+          <button id="createShapeButton">Create</button>
       </div>
+
     </div>
   </div>
 </body>
