@@ -396,11 +396,11 @@ $(document).ready(function() {
   function createTriangle(value, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
     moveAndDraw(value);
-    computeAngle(90);
-    moveAndDraw(value);
-    computeAngle(170);
+    computeAngle(135);
     moveAndDraw(value * Math.sqrt(2));
     computeAngle(135);
+    moveAndDraw(value);
+    computeAngle(90);
     changeStrokeColor(strokeColor, true);
   }
 
@@ -413,18 +413,19 @@ $(document).ready(function() {
     moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
+    computeAngle(90);
     changeStrokeColor(strokeColor, true);
   }
 
-  function createRectangle() {
+  function createRectangle(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
     moveAndDraw(value);
     computeAngle(90);
-    moveAndDraw(value);
+    moveAndDraw(secondaryValue);
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
-    moveAndDraw(value);
+    moveAndDraw(secondaryValue);
     computeAngle(90);
     changeStrokeColor(strokeColor, true);
   }
@@ -463,4 +464,77 @@ $(document).ready(function() {
   function toRadians (angle) {
     return angle * (Math.PI / 180);
   }
+
+  var getSelectedShape = function () {
+    var shape = $("#shape-select").val();
+    return shape;
+  }
+
+  var getSelectedColor = function () {
+    var color = $("#color-input-field").val();
+    return color;
+  }
+
+  var getValue = function () {
+    var value = $("#value-input-field").val();
+    return value;
+  }
+
+  var getSecondaryValue = function () {
+    var value = $("#value-2nd-input-field").val();
+    return value;
+  }
+
+
+  //todo: rectangle multiple values
+  function getSelectedValues() {
+    // clearCanvas();
+    clearScreen(context, bgColor);
+    var selectedColor   = getSelectedColor();
+    var selectedShape   = getSelectedShape();
+    var value           = parseFloat(getValue());
+    // var sendondaryValue = null;
+    var sendondaryValue = parseFloat(getSecondaryValue());
+
+    if (typeof selectedColor === 'undefined') {
+      selectedColor = "#000000";
+    }
+
+    if (typeof value === 'undefined') {
+      value = 100;
+    }
+
+    if (typeof secondaryValue === 'undefined') {
+      secondaryValue = value * 2;
+    }
+
+    switch(selectedShape) {
+      case "square":
+        // console.log("square");
+        createSquare(value, selectedColor);
+        break;
+
+      case "rectangle":
+        createRectangle(value, secondaryValue, selectedColor);
+        // console.log("rectangle");
+        break;
+
+      case "triangle":
+        // console.log("triangle");
+        createTriangle(value, selectedColor);
+        break;
+
+      case "circle":
+        // console.log("circle");
+        createCircle(value, selectedColor);
+        break;
+
+      case "trapezoid":
+        // console.log("trapezoid");
+        break;
+    }
+  }
+
+  $("#createShapeButton").click(getSelectedValues);
+
 });
