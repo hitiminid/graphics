@@ -4,10 +4,8 @@ var bgColor = "#F1F1F1";
 
 /*
 todo:
-[]  TODO: bugi w poruszaniu po skosie
 []  TODO: skala
 []  TODO: wyswietl zółwia
-[]  TODO: krzywa kocha
 */
 
 $(document).ready(function() {
@@ -16,11 +14,12 @@ $(document).ready(function() {
   var inputField           = document.getElementById("input-field");
   var board                = document.getElementById("board");
   var context              = board.getContext("2d");
-  var singleCommandsArray  = ["clear", "help", "start"];
+  var singleCommandsArray  = ["clear", "help", "start", "bounds"];
   var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background"];
   var tripleCommandsArray  = ["move", "square", "circle", "triangle", "koch"];
   var strokeColor          = "#000";
   var shapesArray          = ["square", "circle", "triangle"];
+  var boundsExceededCorrection = true;
 
   // var CANVAS_HEIGHT  = 5000;
   var CANVAS_HEIGHT  = board.height;
@@ -78,7 +77,6 @@ $(document).ready(function() {
         value   = parseFloat(commandElements[1]);
         if (command == "move" || command == "koch") {
           value2 = parseFloat(commandElements[2]);
-          //console.log(value2);
         }
       }
       addTextAndClearInput();
@@ -194,6 +192,10 @@ $(document).ready(function() {
       case "triangle":
         createTriangle(parseFloat(value), value2);
       break;
+
+      case "bounds":
+        changeBoundsOption();
+        break;
     }
   }
 
@@ -292,8 +294,10 @@ $(document).ready(function() {
     }
     //TODO: check a case when bounds are exceeded
 
-    currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
-    currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
+    if (boundsExceededCorrection) {
+      currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
+      currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
+    }
 
     // //console.log(currentXPosition, currentYPosition)
     // currentXPosition = computeX(currentXPosition)
@@ -370,7 +374,7 @@ $(document).ready(function() {
         currentAngle -= 360;
       }
     }
-    //console.log("currentAngle", currentAngle)
+    $("#commands-list").append("<p>Angle = " + currentAngle +"</p>")
   }
 
   function filterArrayFromWhiteSpaces(array) {
@@ -475,21 +479,30 @@ $(document).ready(function() {
   function toDegrees (angle) {
     return angle * (180 / Math.PI);
   }
+
   function toRadians (angle) {
     return angle * (Math.PI / 180);
   }
 
-  var getSelectedShape = function () {
+  var changeBoundsOption = function() {
+    console.log("before", boundsExceededCorrection)
+    boundsExceededCorrection = !boundsExceededCorrection;
+
+    $("#commands-list").append("<p>BoundsCorrection = " + boundsExceededCorrection +"</p>")
+    console.log("after", boundsExceededCorrection)
+  }
+
+  var getSelectedShape = function() {
     var shape = $("#shape-select").val();
     return shape;
   }
 
-  var getSelectedColor = function () {
+  var getSelectedColor = function() {
     var color = $("#color-input-field").val();
     return color;
   }
 
-  var getValue = function () {
+  var getValue = function() {
     var value = $("#value-input-field").val();
     return value;
   }
