@@ -24,10 +24,10 @@ $(document).ready(function() {
 
   // var CANVAS_HEIGHT  = 5000;
   var CANVAS_HEIGHT  = board.height;
-  // console.log(CANVAS_HEIGHT)
+  // //console.log(CANVAS_HEIGHT)
   // var CANVAS_WIDTH   = 5000;
   var CANVAS_WIDTH   = board.width;
-  // console.log(CANVAS_WIDTH)
+  // //console.log(CANVAS_WIDTH)
   var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
   var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
@@ -46,7 +46,7 @@ $(document).ready(function() {
 
   function initialActions() {
     context.moveTo(INITIAL_X_VALUE, INITIAL_Y_VALUE);
-    console.log(currentXPosition, currentYPosition);
+    //console.log(currentXPosition, currentYPosition);
     // alert('moved to initial place');
   }
 
@@ -78,7 +78,7 @@ $(document).ready(function() {
         value   = parseFloat(commandElements[1]);
         if (command == "move" || command == "koch") {
           value2 = parseFloat(commandElements[2]);
-          console.log(value2);
+          //console.log(value2);
         }
       }
       addTextAndClearInput();
@@ -217,7 +217,7 @@ $(document).ready(function() {
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
-      // console.log(currentAngle)
+      // //console.log(currentAngle)
       // angle = currentAngle;
       angle = 90 - currentAngle;
       // var xTranslation = value * cos(currentAngle);
@@ -226,7 +226,7 @@ $(document).ready(function() {
       var xTranslation = value * Math.cos(toRadians(angle));
       var yTranslation = value * Math.sin(toRadians(angle));
 
-      console.log(xTranslation, yTranslation)
+      //console.log(xTranslation, yTranslation)
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
@@ -240,7 +240,7 @@ $(document).ready(function() {
     } else if (currentAngle > 90 && currentAngle < 180) {
 
         angle = currentAngle - 90;
-        console.log("(90,180)",currentAngle)
+        //console.log("(90,180)",currentAngle)
         // var xTranslation = value * Math.sin(currentAngle);
         // var yTranslation = value * cos(currentAngle);
 
@@ -249,7 +249,7 @@ $(document).ready(function() {
 
         currentXPosition += Math.abs(xTranslation);
         currentYPosition += Math.abs(yTranslation);
-        console.log("x", xTranslation, "y", yTranslation)
+        //console.log("x", xTranslation, "y", yTranslation)
 
     } else if (currentAngle === 180) {
 
@@ -263,12 +263,12 @@ $(document).ready(function() {
 
       // var xTranslation = value * cos(currentAngle);
       // var yTranslation = value * sin(currentAngle);
-      // console.log(toRadians(30)),
-      // console.log()
+      // //console.log(toRadians(30)),
+      // //console.log()
       var xTranslation = value * Math.sin(toRadians(angle));
       var yTranslation = value * Math.cos(toRadians(angle));
 
-      console.log("x translate =", xTranslation, "y translate =", yTranslation)
+      //console.log("x translate =", xTranslation, "y translate =", yTranslation)
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition += Math.abs(yTranslation);
 
@@ -295,13 +295,13 @@ $(document).ready(function() {
     currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
     currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
 
-    // console.log(currentXPosition, currentYPosition)
+    // //console.log(currentXPosition, currentYPosition)
     // currentXPosition = computeX(currentXPosition)
     // currentYPosition = computeY(currentYPosition)
-    // console.log("after", currentXPosition, currentYPosition)
+    // //console.log("after", currentXPosition, currentYPosition)
 
-    console.log("from", oldX, oldY);
-    console.log("to",   currentXPosition, currentYPosition);
+    //console.log("from", oldX, oldY);
+    //console.log("to",   currentXPosition, currentYPosition);
 
     context.beginPath();
     context.moveTo(oldX, oldY);
@@ -370,7 +370,7 @@ $(document).ready(function() {
         currentAngle -= 360;
       }
     }
-    console.log("currentAngle", currentAngle)
+    //console.log("currentAngle", currentAngle)
   }
 
   function filterArrayFromWhiteSpaces(array) {
@@ -384,7 +384,7 @@ $(document).ready(function() {
   }
 
   function createCircle(radius, colorHexValue) {
-    console.log("hex", colorHexValue);
+    //console.log("hex", colorHexValue);
     changeStrokeColor(colorHexValue.toString(), false);
     context.beginPath();
     context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
@@ -425,6 +425,20 @@ $(document).ready(function() {
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
+    moveAndDraw(secondaryValue);
+    computeAngle(90);
+    changeStrokeColor(strokeColor, true);
+  }
+
+  function createTrapezoid(value, secondaryValue, colorHexValue) {
+    changeStrokeColor(colorHexValue, false)
+    computeAngle(30); //right 30
+    moveAndDraw(value);
+    computeAngle(60);
+    moveAndDraw(secondaryValue);
+    computeAngle(120);
+    moveAndDraw(value);
+    computeAngle(60);
     moveAndDraw(secondaryValue);
     computeAngle(90);
     changeStrokeColor(strokeColor, true);
@@ -485,16 +499,13 @@ $(document).ready(function() {
     return value;
   }
 
-
   //todo: rectangle multiple values
   function getSelectedValues() {
-    // clearCanvas();
     clearScreen(context, bgColor);
-    var selectedColor   = getSelectedColor();
-    var selectedShape   = getSelectedShape();
-    var value           = parseFloat(getValue());
-    // var sendondaryValue = null;
-    var sendondaryValue = parseFloat(getSecondaryValue());
+    var selectedColor  = getSelectedColor();
+    var selectedShape  = getSelectedShape();
+    var value          = parseFloat(getValue());
+    var secondaryValue = parseFloat(getSecondaryValue());
 
     if (typeof selectedColor === 'undefined') {
       selectedColor = "#000000";
@@ -503,34 +514,29 @@ $(document).ready(function() {
     if (typeof value === 'undefined') {
       value = 100;
     }
-
     if (typeof secondaryValue === 'undefined') {
       secondaryValue = value * 2;
     }
 
     switch(selectedShape) {
       case "square":
-        // console.log("square");
         createSquare(value, selectedColor);
         break;
 
       case "rectangle":
         createRectangle(value, secondaryValue, selectedColor);
-        // console.log("rectangle");
         break;
 
       case "triangle":
-        // console.log("triangle");
         createTriangle(value, selectedColor);
         break;
 
       case "circle":
-        // console.log("circle");
         createCircle(value, selectedColor);
         break;
 
       case "trapezoid":
-        // console.log("trapezoid");
+        createTrapezoid(value, secondaryValue, selectedColor);
         break;
     }
   }

@@ -37,4 +37,12 @@
 
 #send-button {
   flex: 1;
+  background: #f1f1f1;
+  border: solid 1px #333333;
+}
+
+#send-button:hover {
+  color: #f1f1f1;
+  background: #333333;
+  border: solid 1px #f1f1f1;
 }
