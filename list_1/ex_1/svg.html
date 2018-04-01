@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>SVG</title>
+  <meta charset="UTF-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="logo.js"></script>
+  <script type="text/javascript" src="svg.js"></script>
+  <link rel="stylesheet" href="main-style.css">
+  <link rel="stylesheet" href="shapes.css">
+</head>
+
+<body >
+  <div id="container">
+    <div id="board-container">
+      <svg id="board" height="900" width="1600">
+        <!-- <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2" /> -->
+      </svg>
+    </div>
+    <div id="creation-field">
+      <div id="inner">
+          <form>
+            <input id="koch-level-input" placeholder="Level"/>
+            <input id="lenth-input"      placeholder="Length"/>
+            <input id="koch-color-input" placeholder="Color"/>
+          </form>
+          <button id="createKochButton">Create</button>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

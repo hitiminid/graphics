@@ -1,6 +1,7 @@
 #creation-field {
   display: flex;
   align-items: center;
+  flex:2;
   justify-content: center;
   background: #f1f1f1;
   border-top: solid 2px #333333;
@@ -19,7 +20,7 @@ select {
 }
 
 input {
-  width: 90%;
+  width: 94%;
   /* width: 100px; */
   height: 40px;
 }

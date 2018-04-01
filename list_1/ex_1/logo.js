@@ -492,6 +492,10 @@ $(document).ready(function() {
     console.log("after", boundsExceededCorrection)
   }
 
+  /*
+    SHAPES
+  */
+
   var getSelectedShape = function() {
     var shape = $("#shape-select").val();
     return shape;
@@ -555,5 +559,7 @@ $(document).ready(function() {
   }
 
   $("#createShapeButton").click(getSelectedValues);
+
+  /* SVG */
 
 });
