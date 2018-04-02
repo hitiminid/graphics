@@ -527,11 +527,10 @@ $(document).ready(function() {
     if (typeof selectedColor === 'undefined') {
       selectedColor = "#000000";
     }
-
-    if (typeof value === 'undefined') {
+    if (isNaN(value)) {
       value = 100;
     }
-    if (typeof secondaryValue === 'undefined') {
+    if (isNaN(secondaryValue)) {
       secondaryValue = value * 2;
     }
 

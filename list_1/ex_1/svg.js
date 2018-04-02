@@ -4,11 +4,9 @@ var SVG_HEIGHT;
 
 var START_X;
 var START_Y;
-var CURRENT_X = START_X;
-var CURRENT_Y = START_Y;
+var currentXPosition;
+var currentYPosition;
 var currentDegree = 0;
-
-$(document).ready();
 
 $(document).ready(function(){
   $("#createKochButton").click(createKoch);
@@ -19,6 +17,19 @@ var setSVGReference = function () {
   return document.getElementById("board");
 }
 
+var getColorValue = function() {
+  var abc = $("#koch-color-input").val();
+  return abc;
+}
+
+var getLevelValue = function() {
+  return $("#koch-level-input").val();
+}
+
+var getLengthValue = function() {
+  return $("#koch-length-input").val();
+}
+
 var initialFunction = function () {
   // var SVGBox = svgCanvas.getBoundingClientRect();
   SVG_WIDTH  = 1600;
@@ -26,27 +37,97 @@ var initialFunction = function () {
 
   START_X = SVG_WIDTH  / 2;
   START_Y = SVG_HEIGHT / 2;
+  currentXPosition = START_X;
+  currentYPosition = START_Y;
 }
 
-var createKoch = function () {
-  // console.log(SVG_WIDTH);
-  // console.log(SVG_HEIGHT);
-  createLine();
+var getKochLevel = function() {
+  var level = parseFloat(getLevelValue());
+  if (isNaN(level)) {
+    level = 2;
+  }
+  return level;
 }
 
-var createLine = function (size) {
-  var strokeStyle = "style='stroke:rgb(255,0,0);stroke-width:2'";
-  var startArray  = computeStartValues();
-  var endArray    = computeEndValues();
-  // $("#board").append("<line " + strokeStyle +" x1='0' y1='0' x2='200' y2='200'  />")
-  // refreshSVG();
-  performRotation(30)
+var getKochLength = function() {
+  var length = parseFloat(getLengthValue());
+  if (isNaN(length)) {
+    length = 50;
+  }
+  return length;
 }
 
-var computeStartValues = function () {
+var createKoch = function() {
+  var kochLength = getKochLength();
+  var kochLevel  = getKochLevel();
+  koch(kochLevel, kochLength);
 }
 
-var computeEndValues   = function () {
+var toRadians = function(angle) {
+  return angle * (Math.PI / 180);
+}
+
+var createStrokeColor = function() {
+  var color = getColorValue();
+  if (color == "") {
+    color = "#000000";
+  }
+  return "stroke='" + color + "'";
+}
+
+var createLine = function (value) {
+  var strokeColor = createStrokeColor();
+  var strokeWidth = "stroke-width='2'";
+  var strokeStyle = strokeColor + " " + strokeWidth;
+  var startX   = currentXPosition;
+  var startY   = currentYPosition;
+  computeEndValues(value);
+
+  $("#board").append("<line " + strokeStyle +" x1='"+startX+"' y1='"+startY+"' x2='"+currentXPosition+"' y2='"+currentYPosition+"'  />")
+  refreshSVG();
+}
+
+var computeEndValues = function (value) {
+  if (currentDegree === 0) {
+    currentYPosition -= value;
+
+  } else if (currentDegree > 0 && currentDegree < 90) {
+    angle = 90 - currentDegree;
+    var xTranslation = value * Math.cos(toRadians(angle));
+    var yTranslation = value * Math.sin(toRadians(angle));
+    currentXPosition += Math.abs(xTranslation);
+    currentYPosition -= Math.abs(yTranslation);
+
+  } else if (currentDegree === 90) {
+    currentXPosition += value;
+
+  } else if (currentDegree > 90 && currentDegree < 180) {
+      angle = currentDegree - 90;
+      var xTranslation = value * Math.cos(toRadians(angle));
+      var yTranslation = value * Math.sin(toRadians(angle));
+      currentXPosition += Math.abs(xTranslation);
+      currentYPosition += Math.abs(yTranslation);
+
+  } else if (currentDegree === 180) {
+    currentYPosition += value;
+
+  } else if (currentDegree > 180 && currentDegree < 270) {
+    angle = currentDegree - 180;
+    var xTranslation = value * Math.sin(toRadians(angle));
+    var yTranslation = value * Math.cos(toRadians(angle));
+    currentXPosition -= Math.abs(xTranslation);
+    currentYPosition += Math.abs(yTranslation);
+
+  } else if (currentDegree === 270) {
+    currentXPosition -= value;
+
+  } else if (currentDegree > 270 && currentDegree < 360) {
+    angle = currentDegree - 270;
+    var xTranslation = value * Math.cos(toRadians(angle));
+    var yTranslation = value * Math.sin(toRadians(angle));
+    currentXPosition -= Math.abs(xTranslation);
+    currentYPosition -= Math.abs(yTranslation);
+  }
 }
 
 var refreshSVG = function () {
@@ -64,10 +145,10 @@ var performRotation = function(degree) {
       currentDegree -= 360;
     }
   }
-  console.log(currentDegree);
 }
 
 var koch = function(n, size) {
+  refreshSVG();
   if (n == 0) {
     createLine(size);
   } else {
