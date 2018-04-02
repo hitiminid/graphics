@@ -7,14 +7,13 @@
   <script type="text/javascript" src="svg.js"></script>
   <link rel="stylesheet" href="main-style.css">
   <link rel="stylesheet" href="shapes.css">
+  <link rel="stylesheet" href="svg-animations.css">
 </head>
 
 <body >
   <div id="container">
     <div id="board-container">
-      <svg id="board" height="900" width="1600">
-        
-      </svg>
+      <svg id="board" height="900" width="1600"></svg>
     </div>
     <div id="creation-field">
       <div id="inner">
@@ -23,9 +22,12 @@
             <input id="koch-length-input"     placeholder="Length"/>
             <input id="koch-color-input" placeholder="Color"/>
           </form>
+          <select id="animations-select">
+            <option value="none">None</option>
+            <option value="fade">Fade</option>
+          </select>
           <button id="createKochButton">Create</button>
       </div>
-
     </div>
   </div>
 </body>

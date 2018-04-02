@@ -1,3 +1,4 @@
+// var AnimationEnum = Object.freeze ({ none: {}, fade: {} });
 var svgCanvas = $(document).ready(setSVGReference);
 var SVG_WIDTH;
 var SVG_HEIGHT;
@@ -38,6 +39,10 @@ var getColorValue = function() {
     default:
       return color;
   }
+}
+
+var getAnimationValue = function() {
+  return $("#animations-select").val();
 }
 
 var getLevelValue = function() {
@@ -98,13 +103,25 @@ var createLine = function (value) {
   var strokeColor = createStrokeColor();
   var strokeWidth = "stroke-width='2'";
   var strokeStyle = strokeColor + " " + strokeWidth;
-  var startX   = currentXPosition;
-  var startY   = currentYPosition;
+  var startX      = currentXPosition;
+  var startY      = currentYPosition;
   computeEndValues(value);
   var lineID = "line" + currentID;
+  var animationClass = "";
 
-  $("#board").append("<line id='"+ lineID +"' "+ strokeStyle + " x1='" + startX + "' y1='" + startY + "' x2='" + currentXPosition+"' y2='" + currentYPosition+"' />");
+  if (getAnimationValue() === "fade") {
+    animationClass = "class= 'fade'";
+  }
+
+  $("#board").append("<line " + animationClass + " id='" + lineID + "' " + strokeStyle + " x1='" + startX + "' y1='" + startY + "' x2='" + currentXPosition+"' y2='" + currentYPosition+"' />");
+
+  if (getAnimationValue() === "fade") {
+    console.log(123);
+    $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
+  }
+  // $("#board").append("<animate xlink:href='#"+ lineID+"' attributeName='fill' values='red;green;blue' dur='2s' repeatCount='indefinite' />");
   currentID++;
+  refreshSVG();
 }
 
 var computeEndValues = function (value) {
@@ -168,15 +185,15 @@ var performRotation = function(degree) {
 }
 
 var koch = function(n, size) {
-  if (n == 0) {
-    createLine(size);
-  } else {
-    koch(n-1, size);
-    performRotation(-60.0);
-    koch(n-1, size);
-    performRotation(120.0);
-    koch(n-1, size);
-    performRotation(-60.0);
-    koch(n-1, size);
-  }
+    if (n == 0) {
+      createLine(size);
+    } else {
+      koch(n-1, size);
+      performRotation(-60.0);
+      koch(n-1, size);
+      performRotation(120.0);
+      koch(n-1, size);
+      performRotation(-60.0);
+      koch(n-1, size);
+    }
 }

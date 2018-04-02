@@ -10,7 +10,6 @@
 }
 
 #inner {
-
 }
 
 select {
@@ -20,7 +19,7 @@ select {
 }
 
 input {
-  width: 94%;
+  width: 98%;
   /* width: 100px; */
   height: 40px;
 }
@@ -33,8 +32,11 @@ button {
 }
 
 button:hover {
-
   color: #f1f1f1;
   background: #333333;
   border: solid 2px #f1f1f1;
+}
+
+#animations-select {
+    width: 100%;
 }
