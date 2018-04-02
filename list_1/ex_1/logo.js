@@ -21,12 +21,8 @@ $(document).ready(function() {
   var shapesArray          = ["square", "circle", "triangle"];
   var boundsExceededCorrection = true;
 
-  // var CANVAS_HEIGHT  = 5000;
   var CANVAS_HEIGHT  = board.height;
-  // //console.log(CANVAS_HEIGHT)
-  // var CANVAS_WIDTH   = 5000;
   var CANVAS_WIDTH   = board.width;
-  // //console.log(CANVAS_WIDTH)
   var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
   var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
@@ -45,8 +41,6 @@ $(document).ready(function() {
 
   function initialActions() {
     context.moveTo(INITIAL_X_VALUE, INITIAL_Y_VALUE);
-    //console.log(currentXPosition, currentYPosition);
-    // alert('moved to initial place');
   }
 
   $("#send-button").bind( "click", function(event) {
@@ -120,7 +114,6 @@ $(document).ready(function() {
     } else if (doubleCommandsArray.includes(command) && inputParts.length == 2 && (isValidValue || command =="koch")) {
       return true;
     } else if (tripleCommandsArray.includes(command) && inputParts.length == 3) {
-      //TODO: check whether move values are correct
       if (contains(shapesArray, command) && !colorValueValidation) {
         return false;
       }
@@ -203,7 +196,7 @@ $(document).ready(function() {
     currentXPosition = computeX(xValue);
     currentYPosition = computeY(yValue);
     context.moveTo(currentXPosition, currentYPosition);
-    createCircle(10, "#008800");
+    // createCircle(10, "#008800");
   }
 
   function moveAndDraw(value) {
@@ -213,100 +206,58 @@ $(document).ready(function() {
     oldY = currentYPosition;
 
     if (currentAngle === 0) {
-      // value = CANVAS_HEIGHT - computeY(value);
-      // value = CANVAS_HEIGHT - value;
+
       currentYPosition -= value;
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
-      // //console.log(currentAngle)
-      // angle = currentAngle;
       angle = 90 - currentAngle;
-      // var xTranslation = value * cos(currentAngle);
-      // var yTranslation = value * sin(currentAngle);
-
       var xTranslation = value * Math.cos(toRadians(angle));
       var yTranslation = value * Math.sin(toRadians(angle));
-
-      //console.log(xTranslation, yTranslation)
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
     } else if (currentAngle === 90) {
-
-      // value = computeX(value);
-      // value = (value);
 
       currentXPosition += value;
 
     } else if (currentAngle > 90 && currentAngle < 180) {
 
         angle = currentAngle - 90;
-        //console.log("(90,180)",currentAngle)
-        // var xTranslation = value * Math.sin(currentAngle);
-        // var yTranslation = value * cos(currentAngle);
-
         var xTranslation = value * Math.cos(toRadians(angle));
         var yTranslation = value * Math.sin(toRadians(angle));
-
         currentXPosition += Math.abs(xTranslation);
         currentYPosition += Math.abs(yTranslation);
-        //console.log("x", xTranslation, "y", yTranslation)
 
     } else if (currentAngle === 180) {
-
-      // value = CANVAS_HEIGHT - computeY(value);
-      // value = CANVAS_HEIGHT - value;
 
       currentYPosition += value;
 
     } else if (currentAngle > 180 && currentAngle < 270) {
-      angle = currentAngle - 180;
 
-      // var xTranslation = value * cos(currentAngle);
-      // var yTranslation = value * sin(currentAngle);
-      // //console.log(toRadians(30)),
-      // //console.log()
+      angle = currentAngle - 180;
       var xTranslation = value * Math.sin(toRadians(angle));
       var yTranslation = value * Math.cos(toRadians(angle));
-
-      //console.log("x translate =", xTranslation, "y translate =", yTranslation)
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 270) {
 
-      // value = computeX(value);
       currentXPosition -= value;
 
     } else if (currentAngle > 270 && currentAngle < 360) {
 
       angle = currentAngle - 270;
-      // var xTranslation = value * sin(currentAngle);
-      // var yTranslation = value * cos(currentAngle);
-      //TODO: probably wrong :/
       var xTranslation = value * Math.cos(toRadians(angle));
       var yTranslation = value * Math.sin(toRadians(angle));
-
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
-
     }
     //TODO: check a case when bounds are exceeded
-
     if (boundsExceededCorrection) {
       currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
       currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
     }
-
-    // //console.log(currentXPosition, currentYPosition)
-    // currentXPosition = computeX(currentXPosition)
-    // currentYPosition = computeY(currentYPosition)
-    // //console.log("after", currentXPosition, currentYPosition)
-
-    //console.log("from", oldX, oldY);
-    //console.log("to",   currentXPosition, currentYPosition);
-
     context.beginPath();
     context.moveTo(oldX, oldY);
     context.lineTo(currentXPosition, currentYPosition);
@@ -362,7 +313,6 @@ $(document).ready(function() {
     context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 
-  // here it will be passed as a -90 or 90 depending on a fact whether we use right or left
   function computeAngle(value) {
     currentAngle += value;
     if (currentAngle <= 0) {
@@ -388,7 +338,6 @@ $(document).ready(function() {
   }
 
   function createCircle(radius, colorHexValue) {
-    //console.log("hex", colorHexValue);
     changeStrokeColor(colorHexValue.toString(), false);
     context.beginPath();
     context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
@@ -492,10 +441,9 @@ $(document).ready(function() {
     console.log("after", boundsExceededCorrection)
   }
 
-  /*
-    SHAPES
-  */
-
+  /****************************************************
+                        SHAPES
+  *****************************************************/
   var getSelectedShape = function() {
     var shape = $("#shape-select").val();
     return shape;
@@ -556,9 +504,5 @@ $(document).ready(function() {
         break;
     }
   }
-
   $("#createShapeButton").click(getSelectedValues);
-
-  /* SVG */
-
 });

@@ -7,6 +7,7 @@ var START_Y;
 var currentXPosition;
 var currentYPosition;
 var currentDegree = 0;
+var currentID     = 0;
 
 $(document).ready(function(){
   $("#createKochButton").click(createKoch);
@@ -18,8 +19,25 @@ var setSVGReference = function () {
 }
 
 var getColorValue = function() {
-  var abc = $("#koch-color-input").val();
-  return abc;
+  var color = $("#koch-color-input").val().toLowerCase();
+  switch (color) {
+    case "red":
+      return "#ff0000";
+    case "green":
+      return "#008000";
+    case "blue":
+      return "#0000ff";
+    case "purple":
+      return "#800080";
+    case "orange":
+      return "#ffa500";
+    case "pink":
+      return "#ffc0cb";
+    case "yellow":
+      return "#ffff00";
+    default:
+      return color;
+  }
 }
 
 var getLevelValue = function() {
@@ -31,12 +49,12 @@ var getLengthValue = function() {
 }
 
 var initialFunction = function () {
-  // var SVGBox = svgCanvas.getBoundingClientRect();
   SVG_WIDTH  = 1600;
   SVG_HEIGHT = 900;
 
   START_X = SVG_WIDTH  / 2;
-  START_Y = SVG_HEIGHT / 2;
+  START_Y = SVG_HEIGHT;
+  // START_Y = SVG_HEIGHT / 2;
   currentXPosition = START_X;
   currentYPosition = START_Y;
 }
@@ -61,6 +79,7 @@ var createKoch = function() {
   var kochLength = getKochLength();
   var kochLevel  = getKochLevel();
   koch(kochLevel, kochLength);
+  refreshSVG();
 }
 
 var toRadians = function(angle) {
@@ -82,9 +101,10 @@ var createLine = function (value) {
   var startX   = currentXPosition;
   var startY   = currentYPosition;
   computeEndValues(value);
+  var lineID = "line" + currentID;
 
-  $("#board").append("<line " + strokeStyle +" x1='"+startX+"' y1='"+startY+"' x2='"+currentXPosition+"' y2='"+currentYPosition+"'  />")
-  refreshSVG();
+  $("#board").append("<line id='"+ lineID +"' "+ strokeStyle + " x1='" + startX + "' y1='" + startY + "' x2='" + currentXPosition+"' y2='" + currentYPosition+"' />");
+  currentID++;
 }
 
 var computeEndValues = function (value) {
@@ -148,7 +168,6 @@ var performRotation = function(degree) {
 }
 
 var koch = function(n, size) {
-  refreshSVG();
   if (n == 0) {
     createLine(size);
   } else {
