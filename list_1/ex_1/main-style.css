@@ -5,47 +5,50 @@
 }
 
 #board-container {
-  width: 1500px;
+  width: 1600px;
   height: 900px;
 }
 
 #board {
   /* flex: 4; */
-  height: 896px;
-  width: 1596px;
-
+  height: 900px;
+  width: 1600px;
   background-color: #f1f1f1;
-  border: 2px black solid;
+  /* border: 2px black solid; */
 }
 
 #command-field {
   /* flex: 1; */
+  width: 200px;
+
   height:900px;
   background-color: blue;
 }
 
 #commands-list {
-    background-color: #8E9EA3;
-    height: 95%;
-    font-size: 20px;
-    overflow-x: auto;
-    overflow-y: auto;
+  background-color: #8E9EA3;
+  height: 95%;
+  font-size: 20px;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 #input-area {
   height: 5%;
   background-color: black;
+  width:200px;
   display: flex;
 }
 
 #input-field {
-  flex: 4;
-  font-size: 20px;
-  height: 85%
+  flex: 7;
+  font-size: 10px;
+  /* height: 85% */
 }
 
 #send-button {
-  flex: 1;
+  flex: 3;
+  width:30px;
   background: #f1f1f1;
   border: solid 1px #333333;
 }
@@ -58,8 +61,8 @@
 
 #turtle {
   position: absolute;
-  height: 20px;
-  width:  20px;
+  height: 30px;
+  width:  30px;
   display: flex;
   left: 0px;
   top:  0px;

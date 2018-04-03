@@ -199,12 +199,12 @@ $(document).ready(function() {
     currentXPosition = computeX(xValue);
     currentYPosition = computeY(yValue);
     context.moveTo(currentXPosition, currentYPosition);
-    // createCircle(10, "#008800");
+    // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}  px;`;
+    createCircle(10, "#008800");
   }
 
   function moveAndDraw(value) {
     // createCircle(10, "#008800");
-
     oldX = currentXPosition;
     oldY = currentYPosition;
 
@@ -266,8 +266,7 @@ $(document).ready(function() {
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
     context.closePath();
-    pointer.style = `left: ${currentXPosition+48}px; top: ${currentYPosition}px;`;
-
+    // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}px;`;
   }
 
   function checkDirectionAndMapMovementValue(value) {
