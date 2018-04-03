@@ -10,6 +10,7 @@ todo:
 
 $(document).ready(function() {
   var commandCounter       = 0;
+  var pointer              = document.getElementById("turtle");
   var sendButton           = document.getElementById("send-button");
   var inputField           = document.getElementById("input-field");
   var board                = document.getElementById("board");
@@ -265,6 +266,8 @@ $(document).ready(function() {
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
     context.closePath();
+    pointer.style = `left: ${currentXPosition+48}px; top: ${currentYPosition}px;`;
+
   }
 
   function checkDirectionAndMapMovementValue(value) {
