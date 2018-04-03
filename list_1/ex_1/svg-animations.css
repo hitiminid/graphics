@@ -1,10 +1,68 @@
 .fade {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
+  stroke-dasharray:  500;
+  stroke-dashoffset: 500;
   animation: dash 20s linear forwards;
 }
 @keyframes dash {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+.rainbow {
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  0%   { stroke: #FF0000 }
+  16%  { stroke: #9400D3 }
+  32%  { stroke: #4B0082 }
+  48%  { stroke: #0000FF }
+  64%  { stroke: #00FF00 }
+  80%  { stroke: #FFFF00 }
+  96%  { stroke: #FF7F00 }
+  100% { stroke: #FF0000 }
+}
+
+.rainbow1 {
+  animation: rainbow1 1s linear infinite;
+}
+@keyframes rainbow1 {
+  0%   { stroke: #4adb15 }
+  16%  { stroke: #9400D3 }
+  32%  { stroke: #4B0082 }
+  48%  { stroke: #000cff }
+  64%  { stroke: #ff23c0 }
+  80%  { stroke: #FFFF00 }
+  96%  { stroke: #FF0000 }
+  100% { stroke: #fffa00 }
+}
+
+.rainbow2 {
+  animation: rainbow2 0.8s linear infinite;
+}
+@keyframes rainbow2 {
+  0%   { stroke: #FF0000 }
+  16%  { stroke: #FFFF00 }
+  32%  { stroke: #4B0082 }
+  48%  { stroke: #000cff }
+  64%  { stroke: #fffa00 }
+  80%  { stroke: #9400D3 }
+  96%  { stroke: #ff23c0 }
+  100% { stroke: #4adb15 }
+}
+
+
+.rainbow3 {
+  animation: rainbow3 1.2s linear infinite;
+}
+@keyframes rainbow3 {
+  0%   { stroke: #000cff }
+  16%  { stroke: #4adb15 }
+  32%  { stroke: #FF0000 }
+  48%  { stroke: #0000FF }
+  64%  { stroke: #fffa00 }
+  80%  { stroke: #FFFF00 }
+  96%  { stroke: #9400D3 }
+  100% { stroke: #4B0082 }
 }

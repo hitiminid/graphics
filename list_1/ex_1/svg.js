@@ -1,5 +1,6 @@
 // var AnimationEnum = Object.freeze ({ none: {}, fade: {} });
 var svgCanvas = $(document).ready(setSVGReference);
+var outer     = $(document).ready(setOuterReference);
 var SVG_WIDTH;
 var SVG_HEIGHT;
 
@@ -12,11 +13,21 @@ var currentID     = 0;
 
 $(document).ready(function(){
   $("#createKochButton").click(createKoch);
+  $("#clearCanvasButton").click(clearCanvas);
   initialFunction();
 })
 
-var setSVGReference = function () {
+var clearCanvas = function() {
+  $("#board").empty();
+  initialFunction();
+}
+
+var setSVGReference = function() {
   return document.getElementById("board");
+}
+
+var setOuterReference = function() {
+  return document.getElementById("board-container");
 }
 
 var getColorValue = function() {
@@ -99,6 +110,18 @@ var createStrokeColor = function() {
   return "stroke='" + color + "'";
 }
 
+var getRandomChaosStyle = function() {
+  var styleNumber = Math.floor(Math.random() * (3- 1+ 1)) + 1;
+  switch (styleNumber) {
+    case 1:
+      return "class= 'rainbow1'";
+    case 2:
+      return "class= 'rainbow2'";
+    case 3:
+      return "class= 'rainbow3'";
+  }
+}
+
 var createLine = function (value) {
   var strokeColor = createStrokeColor();
   var strokeWidth = "stroke-width='2'";
@@ -111,14 +134,20 @@ var createLine = function (value) {
 
   if (getAnimationValue() === "fade") {
     animationClass = "class= 'fade'";
+  } else if (getAnimationValue() === "rainbow") {
+    animationClass = "class= 'rainbow'";
+  } else if (getAnimationValue() === "chaos") {
+    animationClass = getRandomChaosStyle();
   }
 
   $("#board").append("<line " + animationClass + " id='" + lineID + "' " + strokeStyle + " x1='" + startX + "' y1='" + startY + "' x2='" + currentXPosition+"' y2='" + currentYPosition+"' />");
 
-  if (getAnimationValue() === "fade") {
-    console.log(123);
-    $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
-  }
+  // if (getAnimationValue() === "fade") {
+  //   $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
+  // }
+  //  else if (getAnimationValue() === "fade") {
+  //   $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
+  // }
   // $("#board").append("<animate xlink:href='#"+ lineID+"' attributeName='fill' values='red;green;blue' dur='2s' repeatCount='indefinite' />");
   currentID++;
   refreshSVG();
