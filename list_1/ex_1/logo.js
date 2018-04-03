@@ -80,7 +80,9 @@ $(document).ready(function() {
   }
 
   function keepCommandListScrolledOnNewInput() {
-    $('#commands-list').scrollTop($('#commands-list')[0].scrollHeight);
+    if ($('#commands-list').length > 0) {
+      $('#commands-list').scrollTop($('#commands-list')[0].scrollHeight);
+    }
   }
 
   function addTextAndClearInput() {
@@ -295,7 +297,7 @@ $(document).ready(function() {
   }
 
   function showHelp() {
-    var guide = "1. To move forward use 'forward [value]' <br>2. To move backward use 'backward [value]'<br>3. To rotate clockwise use 'right [value]', <br>counter clockwise - 'left [value]'."
+    var guide = "1. Forward = 'forward [value]' <br>2. Backward = 'backward [value]'<br>3. Rotate = 'right [value]',<br> Rotate = 'left [value]'."
     $("#commands-list").append("<p>" + guide + "</p>")
   }
 
@@ -324,7 +326,8 @@ $(document).ready(function() {
         currentAngle -= 360;
       }
     }
-    $("#commands-list").append("<p>Angle = " + currentAngle +"</p>")
+    $("#commands-list").append("<p>Angle = " + currentAngle +"</p>");
+    keepCommandListScrolledOnNewInput();
   }
 
   function filterArrayFromWhiteSpaces(array) {
@@ -385,6 +388,20 @@ $(document).ready(function() {
 
   function createTrapezoid(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
+    computeAngle(90);
+    moveAndDraw(value);
+    computeAngle(-135);
+    moveAndDraw(Math.sqrt(2) * value / 3);
+    computeAngle(-45);
+    moveAndDraw(value/3);
+    computeAngle(-45);
+    moveAndDraw(Math.sqrt(2) * value / 3);
+    computeAngle(-225);
+    changeStrokeColor(strokeColor, true);
+  }
+
+  function createParallelogram(value, secondaryValue, colorHexValue) {
+    changeStrokeColor(colorHexValue, false)
     computeAngle(30); //right 30
     moveAndDraw(value);
     computeAngle(60);
@@ -394,6 +411,44 @@ $(document).ready(function() {
     computeAngle(60);
     moveAndDraw(secondaryValue);
     computeAngle(90);
+    changeStrokeColor(strokeColor, true);
+  }
+
+  function createHexagon(value, secondaryValue, colorHexValue) {
+    changeStrokeColor(colorHexValue, false)
+    computeAngle(60);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
+    computeAngle(-120);
+    changeStrokeColor(strokeColor, true);
+  }
+
+  function createTriforce(value, secondaryValue, colorHexValue) {
+    changeStrokeColor(colorHexValue, false)
+    computeAngle(90);
+    moveAndDraw(2*value);
+    computeAngle(-120);
+    moveAndDraw(2*value);
+    computeAngle(-120);
+    moveAndDraw(value);
+    computeAngle(-120);
+    moveAndDraw(value);
+    computeAngle(120);
+    moveAndDraw(value);
+    computeAngle(120);
+    moveAndDraw(value);
+    computeAngle(-120);
+    moveAndDraw(value);
+    computeAngle(-210);
     changeStrokeColor(strokeColor, true);
   }
 
@@ -501,6 +556,18 @@ $(document).ready(function() {
 
       case "trapezoid":
         createTrapezoid(value, secondaryValue, selectedColor);
+        break;
+
+      case "parallelogram":
+        createParallelogram(value, secondaryValue, selectedColor);
+        break;
+
+      case "hexagon":
+        createHexagon(value, secondaryValue, selectedColor);
+        break;
+
+      case "triforce":
+        createTriforce(value, secondaryValue, selectedColor);
         break;
     }
   }
