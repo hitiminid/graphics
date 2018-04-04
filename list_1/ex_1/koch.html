@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Koch</title>
+  <meta charset="UTF-8">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="logo.js"></script>
+  <link rel="stylesheet" href="main-style.css">
+  <link rel="stylesheet" href="svg.css">
+</head>
+
+<body >
+  <div id="container">
+    <div id="board-container">
+      <!-- <div id="turtle"></div> -->
+      <canvas id="board" height="900" width="1600"></canvas>
+    </div>
+    <div id="creation-field">
+      <div id="inner">
+          <form>
+            <input id="canvas-koch-level"  placeholder="Level"/>
+            <input id="canvas-koch-length" placeholder="Length"/>
+            <input id="canvas-koch-color"  placeholder="Color"/>
+          </form>
+          <button id="create-canvas-koch">Create</button>
+          <button id="clearCanvasButton">Clear</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

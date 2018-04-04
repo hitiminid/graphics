@@ -24,13 +24,18 @@ $(document).ready(function() {
 
   var CANVAS_HEIGHT  = board.height;
   var CANVAS_WIDTH   = board.width;
+  var VIRTUAL_WIDTH  = 2500;
+  var Y_CENTER;
+  var SCALE_RATIO;
   var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
   var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
   var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
 
-  var currentXPosition = INITIAL_X_VALUE;
-  var currentYPosition = INITIAL_Y_VALUE;
+  var currentXPosition;//= computeX(INITIAL_X_VALUE);
+  var currentYPosition; //= computeY(INITIAL_Y_VALUE);
+  var oldX            ;// = currentXPosition;
+  var oldY            ; //= currentYPosition;
   var currentAngle     = 0.0;
   var MINIMUM_X = 0;
   var MINIMUM_Y = 0
@@ -42,10 +47,20 @@ $(document).ready(function() {
 
   function initialActions() {
     context.moveTo(INITIAL_X_VALUE, INITIAL_Y_VALUE);
+    SCALE_RATIO      = board.width / 2500;
+    Y_CENTER         = board.height / 2;
+    currentXPosition = xRealToVirtual(INITIAL_X_VALUE);
+    currentYPosition = yRealToVirtual(INITIAL_Y_VALUE);
+    oldX             = currentXPosition;
+    oldY             = currentYPosition;
   }
 
   $("#send-button").bind( "click", function(event) {
     performInputAction(inputField);
+  });
+
+  $("#debug").bind( "click", function(event) {
+    console.log("123")
   });
 
   $('#input-field').keypress(function (event) {
@@ -211,12 +226,13 @@ $(document).ready(function() {
     if (currentAngle === 0) {
 
       currentYPosition -= value;
+      // currentYPosition = currentYPosition)
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
       angle = 90 - currentAngle;
-      var xTranslation = value * Math.cos(toRadians(angle));
-      var yTranslation = value * Math.sin(toRadians(angle));
+      var xTranslation =  value * Math.cos(toRadians(angle));
+      var yTranslation =  value * Math.sin(toRadians(angle));
       currentXPosition += Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
 
@@ -227,8 +243,8 @@ $(document).ready(function() {
     } else if (currentAngle > 90 && currentAngle < 180) {
 
         angle = currentAngle - 90;
-        var xTranslation = value * Math.cos(toRadians(angle));
-        var yTranslation = value * Math.sin(toRadians(angle));
+        var xTranslation =  value * Math.cos(toRadians(angle));
+        var yTranslation =  value * Math.sin(toRadians(angle));
         currentXPosition += Math.abs(xTranslation);
         currentYPosition += Math.abs(yTranslation);
 
@@ -239,8 +255,8 @@ $(document).ready(function() {
     } else if (currentAngle > 180 && currentAngle < 270) {
 
       angle = currentAngle - 180;
-      var xTranslation = value * Math.sin(toRadians(angle));
-      var yTranslation = value * Math.cos(toRadians(angle));
+      var xTranslation =  value * Math.sin(toRadians(angle));
+      var yTranslation =  value * Math.cos(toRadians(angle));
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition += Math.abs(yTranslation);
 
@@ -251,8 +267,8 @@ $(document).ready(function() {
     } else if (currentAngle > 270 && currentAngle < 360) {
 
       angle = currentAngle - 270;
-      var xTranslation = value * Math.cos(toRadians(angle));
-      var yTranslation = value * Math.sin(toRadians(angle));
+      var xTranslation =  value * Math.cos(toRadians(angle));
+      var yTranslation =  value * Math.sin(toRadians(angle));
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition -= Math.abs(yTranslation);
     }
@@ -261,8 +277,16 @@ $(document).ready(function() {
       currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
       currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
     }
+
+    // currentXPosition = computeX(currentXPosition)
+    // currentYPosition = computeY(currentYPosition)
+
     context.beginPath();
+    // var a_oldX = xVirtualToReal(oldX);
+    // var a_oldY = yVirtualToReal(oldY);
     context.moveTo(oldX, oldY);
+    // var newX = xVirtualToReal();
+    // var newY = yVirtualToReal(currentYPosition);
     context.lineTo(currentXPosition, currentYPosition);
     context.stroke();
     context.closePath();
@@ -304,11 +328,34 @@ $(document).ready(function() {
   }
 
   function computeX(x) {
-    return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
+    return x * (1 / SCALE_RATIO);
+    // return x * SCALE_RATIO;
+    // return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
+  }
+
+  function xRealToVirtual(x) {
+    return (x * (1 / SCALE_RATIO));
+  }
+
+  function yRealToVirtual(y) {
+    return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO);
+  }
+
+  function xVirtualToReal(x) {
+    return x * SCALE_RATIO;
+  }
+
+  function yVirtualToReal(y) {
+    return ((y * SCALE_RATIO) + 2 * (Y_CENTER) - (y * SCALE_RATIO));
   }
 
   function computeY(y) {
-    return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y)*(CANVAS_HEIGHT);
+    // return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y)*(CANVAS_HEIGHT);
+    // var realY = y * SCALE_RATIO;
+    // return (realY + 2 * ((Y_CENTER) - realY));
+    // var realY = y * SCALE_RATIO;
+    return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO)
+
   }
 
   function clearScreen(context, bgColorString) {
@@ -491,11 +538,11 @@ $(document).ready(function() {
   }
 
   var changeBoundsOption = function() {
-    console.log("before", boundsExceededCorrection)
     boundsExceededCorrection = !boundsExceededCorrection;
-
     $("#commands-list").append("<p>BoundsCorrection = " + boundsExceededCorrection +"</p>")
-    console.log("after", boundsExceededCorrection)
+    if ($('#commands-list').length > 0) {
+      $('#commands-list').scrollTop($('#commands-list')[0].scrollHeight);
+    }
   }
 
   /****************************************************
@@ -574,4 +621,59 @@ $(document).ready(function() {
     }
   }
   $("#createShapeButton").click(getSelectedValues);
+
+  /****************************************************
+                        KOCH
+  *****************************************************/
+
+  var getCanvasKochLevel = function() {
+    var level = parseFloat($("#canvas-koch-level").val());
+    if (isNaN(level)) {
+      level = 2;
+    }
+    return level;
+  }
+
+  var getCanvasKochLength = function() {
+    var length = parseFloat($("#canvas-koch-length").val());
+    if (isNaN(length)) {
+      length = 50;
+    }
+    return length;
+  }
+
+  var getCanvasKochColor = function() {
+    var color = ($("#canvas-koch-color").val()).toLowerCase();
+    switch (color) {
+      case "red":
+        return "#ff0000";
+      case "green":
+        return "#008000";
+      case "blue":
+        return "#0000ff";
+      case "purple":
+        return "#800080";
+      case "orange":
+        return "#ffa500";
+      case "pink":
+        return "#ffc0cb";
+      case "yellow":
+        return "#ffff00";
+      default:
+        return color;
+    }
+  }
+
+  var createCanvasKoch = function() {
+    //TODO: starting position
+    boundsExceededCorrection = false;
+    var level  = getCanvasKochLevel();
+    var length = getCanvasKochLength();
+    var color  = getCanvasKochColor();
+    changeStrokeColor(color, false);
+
+    koch(level, length);
+  }
+
+  $("#create-canvas-koch").click(createCanvasKoch);
 });
