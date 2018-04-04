@@ -40,19 +40,25 @@ $(document).ready(function() {
   var MINIMUM_X = 0;
   var MINIMUM_Y = 0
 
-  var MAXIMUM_X = 2500;
-  var MAXIMUM_Y = 2500;
+  var MAXIMUM_X = 16000;
+  var MAXIMUM_Y = 9000;
 
   initialActions();
 
   function initialActions() {
-    context.moveTo(INITIAL_X_VALUE, INITIAL_Y_VALUE);
-    SCALE_RATIO      = board.width / 2500;
-    Y_CENTER         = board.height / 2;
-    currentXPosition = xRealToVirtual(INITIAL_X_VALUE);
-    currentYPosition = yRealToVirtual(INITIAL_Y_VALUE);
+    currentXPosition = MAXIMUM_X / 2;
+    currentYPosition = MAXIMUM_Y / 2;
     oldX             = currentXPosition;
     oldY             = currentYPosition;
+    context.moveTo(computeX(currentXPosition), computeY(currentYPosition));
+    SCALE_RATIO      = board.width / 2500;
+    Y_CENTER         = board.height / 2;
+    createCircle(100, "#008800")
+    // currentXPosition = xRealToVirtual(INITIAL_X_VALUE);
+    // currentYPosition = yRealToVirtual(INITIAL_Y_VALUE);
+    // oldX             = currentXPosition;
+    // oldY             = currentYPosition;
+
   }
 
   $("#send-button").bind( "click", function(event) {
@@ -60,7 +66,13 @@ $(document).ready(function() {
   });
 
   $("#debug").bind( "click", function(event) {
-    console.log("123")
+    var x = 2000;
+    var newX = computeX(x);
+    console.log(newX);
+
+    var y = 2000;
+    var newY = computeY(y);
+    console.log(newY);
   });
 
   $('#input-field').keypress(function (event) {
@@ -211,11 +223,13 @@ $(document).ready(function() {
   }
 
   function move(xValue, yValue) {
-    currentXPosition = computeX(xValue);
-    currentYPosition = computeY(yValue);
-    context.moveTo(currentXPosition, currentYPosition);
+    currentXPosition = xValue;
+    currentYPosition = yValue;
+    var x = computeX(xValue)
+    var y = computeY(yValue)
+    context.moveTo(x, y);
     // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}  px;`;
-    createCircle(10, "#008800");
+    createCircle(100, "#008800");
   }
 
   function moveAndDraw(value) {
@@ -274,8 +288,8 @@ $(document).ready(function() {
     }
     //TODO: check a case when bounds are exceeded
     if (boundsExceededCorrection) {
-      currentXPosition = checkIfBoundsAreExceeded(currentXPosition, CANVAS_WIDTH);
-      currentYPosition = checkIfBoundsAreExceeded(currentYPosition, CANVAS_HEIGHT);
+      currentXPosition = checkIfBoundsAreExceeded(currentXPosition, MAXIMUM_X);
+      currentYPosition = checkIfBoundsAreExceeded(currentYPosition, MAXIMUM_Y);
     }
 
     // currentXPosition = computeX(currentXPosition)
@@ -284,10 +298,12 @@ $(document).ready(function() {
     context.beginPath();
     // var a_oldX = xVirtualToReal(oldX);
     // var a_oldY = yVirtualToReal(oldY);
-    context.moveTo(oldX, oldY);
+    var _oldX = computeX(oldX);
+    var _oldY = computeY(oldY);
+    context.moveTo(_oldX, _oldY);
     // var newX = xVirtualToReal();
     // var newY = yVirtualToReal(currentYPosition);
-    context.lineTo(currentXPosition, currentYPosition);
+    context.lineTo(computeX(currentXPosition), computeY(currentYPosition));
     context.stroke();
     context.closePath();
     // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}px;`;
@@ -328,9 +344,9 @@ $(document).ready(function() {
   }
 
   function computeX(x) {
-    return x * (1 / SCALE_RATIO);
+    // return x * (1 / SCALE_RATIO);
     // return x * SCALE_RATIO;
-    // return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
+    return (x / MAXIMUM_X)*(CANVAS_WIDTH);
   }
 
   function xRealToVirtual(x) {
@@ -350,11 +366,11 @@ $(document).ready(function() {
   }
 
   function computeY(y) {
-    // return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y)*(CANVAS_HEIGHT);
+    return CANVAS_HEIGHT - (y / MAXIMUM_Y)*(CANVAS_HEIGHT);
     // var realY = y * SCALE_RATIO;
     // return (realY + 2 * ((Y_CENTER) - realY));
     // var realY = y * SCALE_RATIO;
-    return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO)
+    // return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO)
 
   }
 
@@ -391,8 +407,12 @@ $(document).ready(function() {
 
   function createCircle(radius, colorHexValue) {
     changeStrokeColor(colorHexValue.toString(), false);
+    var x      = computeX(currentXPosition);
+    var y      = computeY(currentYPosition);
+    var radius = computeX(radius);
+
     context.beginPath();
-    context.arc(currentXPosition, currentYPosition, radius, 0 , 2*Math.PI);
+    context.arc(x, y, radius, 0 , 2*Math.PI);
     context.stroke();
     context.closePath();
     changeStrokeColor(strokeColor, true);
@@ -580,7 +600,7 @@ $(document).ready(function() {
       selectedColor = "#000000";
     }
     if (isNaN(value)) {
-      value = 100;
+      value = 500;
     }
     if (isNaN(secondaryValue)) {
       secondaryValue = value * 2;
