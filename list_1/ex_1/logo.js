@@ -239,7 +239,7 @@ $(document).ready(function() {
 
     if (currentAngle === 0) {
 
-      currentYPosition -= value;
+      currentYPosition += value;
       // currentYPosition = currentYPosition)
 
     } else if (currentAngle > 0 && currentAngle < 90) {
@@ -248,7 +248,7 @@ $(document).ready(function() {
       var xTranslation =  value * Math.cos(toRadians(angle));
       var yTranslation =  value * Math.sin(toRadians(angle));
       currentXPosition += Math.abs(xTranslation);
-      currentYPosition -= Math.abs(yTranslation);
+      currentYPosition += Math.abs(yTranslation);
 
     } else if (currentAngle === 90) {
 
@@ -260,7 +260,7 @@ $(document).ready(function() {
         var xTranslation =  value * Math.cos(toRadians(angle));
         var yTranslation =  value * Math.sin(toRadians(angle));
         currentXPosition += Math.abs(xTranslation);
-        currentYPosition += Math.abs(yTranslation);
+        currentYPosition -= Math.abs(yTranslation);
 
     } else if (currentAngle === 180) {
 
@@ -272,7 +272,7 @@ $(document).ready(function() {
       var xTranslation =  value * Math.sin(toRadians(angle));
       var yTranslation =  value * Math.cos(toRadians(angle));
       currentXPosition -= Math.abs(xTranslation);
-      currentYPosition += Math.abs(yTranslation);
+      currentYPosition -= Math.abs(yTranslation);
 
     } else if (currentAngle === 270) {
 
@@ -284,7 +284,7 @@ $(document).ready(function() {
       var xTranslation =  value * Math.cos(toRadians(angle));
       var yTranslation =  value * Math.sin(toRadians(angle));
       currentXPosition -= Math.abs(xTranslation);
-      currentYPosition -= Math.abs(yTranslation);
+      currentYPosition += Math.abs(yTranslation);
     }
     //TODO: check a case when bounds are exceeded
     if (boundsExceededCorrection) {
@@ -431,7 +431,7 @@ $(document).ready(function() {
 
   function createSquare(value, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
-    moveAndDraw(value);
+    moveAndDraw(-value);
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
@@ -444,7 +444,7 @@ $(document).ready(function() {
 
   function createRectangle(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
-    moveAndDraw(value);
+    moveAndDraw(-value);
     computeAngle(90);
     moveAndDraw(secondaryValue);
     computeAngle(90);
@@ -486,7 +486,7 @@ $(document).ready(function() {
   function createHexagon(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
     computeAngle(60);
-    moveAndDraw(value);
+    moveAndDraw(-value);
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-60);
@@ -494,7 +494,7 @@ $(document).ready(function() {
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-60);
-    moveAndDraw(value);
+    moveAndDraw(-value);
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-120);
