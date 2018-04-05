@@ -2,16 +2,6 @@ var sin     = Math.sin;
 var cos     = Math.cos;
 var bgColor = "#F1F1F1";
 
-/*
-todo:
-[ ]  TODO: wyswietl zółwia
-[ ]  TODO: koch starting point
-[ ]  TODO: help - wyswietl komendy
-[ ]  TODO: wyglad
-[X]  TODO: floaty
-[ ]  TODO: meta (sprawdz liste)
-*/
-
 $(document).ready(function() {
   var commandCounter           = 0;
   var pointer                  = document.getElementById("turtle");
@@ -24,11 +14,10 @@ $(document).ready(function() {
   var tripleCommandsArray      = ["move", "square", "circle", "triangle", "koch"];
   var strokeColor              = "#000";
   var shapesArray              = ["square", "circle", "triangle", ""];
-  var boundsExceededCorrection = true;
+  var boundsExceededCorrection = false;
 
   var CANVAS_HEIGHT  = board.height;
   var CANVAS_WIDTH   = board.width;
-  var VIRTUAL_WIDTH  = 2500;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
   var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
 
@@ -53,8 +42,6 @@ $(document).ready(function() {
     context.moveTo(computeX(currentXPosition), computeY(currentYPosition));
     if ($("#koch-creation-field").length > 0) {
       move(MAXIMUM_X / 2, 0);
-    } else {
-      createCircle(100, "#008800");
     }
   }
 
@@ -222,7 +209,6 @@ $(document).ready(function() {
     var x = computeX(xValue)
     var y = computeY(yValue)
     context.moveTo(x, y);
-    createCircle(100, "#008800");
   }
 
   function moveAndDraw(value) {
@@ -278,7 +264,6 @@ $(document).ready(function() {
       currentYPosition += Math.abs(yTranslation);
     }
 
-    //TODO: check a case when bounds are exceeded
     if (boundsExceededCorrection) {
       currentXPosition = checkIfBoundsAreExceeded(currentXPosition, MAXIMUM_X);
       currentYPosition = checkIfBoundsAreExceeded(currentYPosition, MAXIMUM_Y);
@@ -367,12 +352,8 @@ $(document).ready(function() {
 
   function createCircle(radius, colorHexValue) {
     changeStrokeColor(colorHexValue.toString(), false);
-    var x      = computeX(currentXPosition);
-    var y      = computeY(currentYPosition);
-    var radius = computeX(radius);
-
     context.beginPath();
-    context.arc(x, y, radius, 0 , 2*Math.PI);
+    context.arc(computeX(currentXPosition), computeY(currentYPosition), computeX(radius), 0 , 2*Math.PI);
     context.stroke();
     context.closePath();
     changeStrokeColor(strokeColor, true);
@@ -528,6 +509,7 @@ $(document).ready(function() {
   /****************************************************
                         SHAPES
   *****************************************************/
+
   var getSelectedShape = function() {
     var shape = $("#shape-select").val();
     return shape;
@@ -600,6 +582,7 @@ $(document).ready(function() {
         break;
     }
   }
+
   $("#createShapeButton").click(getSelectedValues);
 
   /****************************************************

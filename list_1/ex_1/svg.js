@@ -1,4 +1,3 @@
-// var AnimationEnum = Object.freeze ({ none: {}, fade: {} });
 var svgCanvas = $(document).ready(setSVGReference);
 var outer     = $(document).ready(setOuterReference);
 var SVG_WIDTH;
@@ -70,7 +69,6 @@ var initialFunction = function () {
 
   START_X = SVG_WIDTH  / 2;
   START_Y = SVG_HEIGHT;
-  // START_Y = SVG_HEIGHT / 2;
   currentXPosition = START_X;
   currentYPosition = START_Y;
 }
@@ -94,7 +92,7 @@ var getKochLength = function() {
 var createKoch = function() {
   var kochLength = getKochLength();
   var kochLevel  = getKochLevel();
-  koch(kochLevel, kochLength);
+  koch(kochLevel, kochLength/3);
   refreshSVG();
 }
 
@@ -141,14 +139,6 @@ var createLine = function (value) {
   }
 
   $("#board").append("<line " + animationClass + " id='" + lineID + "' " + strokeStyle + " x1='" + startX + "' y1='" + startY + "' x2='" + currentXPosition+"' y2='" + currentYPosition+"' />");
-
-  // if (getAnimationValue() === "fade") {
-  //   $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
-  // }
-  //  else if (getAnimationValue() === "fade") {
-  //   $("#board").append("<animate xlink:href='#" + lineID + "' attributeName='opacity' from='0' to='1' dur='2s'/>");
-  // }
-  // $("#board").append("<animate xlink:href='#"+ lineID+"' attributeName='fill' values='red;green;blue' dur='2s' repeatCount='indefinite' />");
   currentID++;
   refreshSVG();
 }
