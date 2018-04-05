@@ -45,7 +45,7 @@ $(document).ready(function() {
     }
   }
 
-  $("#send-button").bind( "click", function(event) {
+  $("#send-button").bind("click", function(event) {
     performInputAction(inputField);
   });
 
@@ -64,7 +64,7 @@ $(document).ready(function() {
       var value  = null;
       var value2 = null;
 
-      if (command === "color" || command === "background") { //the only command that requires string as a parameter is color (color "F1F1F1")
+      if (command === "color" || command === "background") {
         value = commandElements[1];
       } else if (contains(shapesArray, command)) {
         value  = commandElements[1];
@@ -274,9 +274,6 @@ $(document).ready(function() {
     context.lineTo(computeX(currentXPosition), computeY(currentYPosition));
     context.stroke();
     context.closePath();
-  }
-
-  function checkDirectionAndMapMovementValue(value) {
   }
 
   function checkIfBoundsAreExceeded(value, maxValue) {
