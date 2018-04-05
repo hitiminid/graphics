@@ -530,7 +530,6 @@ $(document).ready(function() {
     return value;
   }
 
-  //todo: rectangle multiple values
   function getSelectedValues() {
     clearScreen(context, bgColor);
     var selectedColor  = getSelectedColor();
@@ -541,10 +540,10 @@ $(document).ready(function() {
     if (typeof selectedColor === 'undefined') {
       selectedColor = "#000000";
     }
-    if (isNaN(value)) {
+    if (isNaN(value) || value < 0) {
       value = 500;
     }
-    if (isNaN(secondaryValue)) {
+    if (isNaN(secondaryValue) || secondaryValue < 0) {
       secondaryValue = value * 2;
     }
 
@@ -590,6 +589,7 @@ $(document).ready(function() {
   *****************************************************/
 
   var clearCanvas = function() {
+    move(MAXIMUM_X / 2, 0);
     context.globalCompositeOperation ="source-over";
     context.fillStyle = bgColor;
     context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -597,7 +597,7 @@ $(document).ready(function() {
 
   var getCanvasKochLevel = function() {
     var level = parseFloat($("#canvas-koch-level").val());
-    if (isNaN(level)) {
+    if (isNaN(level) || level < 0) {
       level = 2;
     }
     return level;
@@ -605,7 +605,7 @@ $(document).ready(function() {
 
   var getCanvasKochLength = function() {
     var length = parseFloat($("#canvas-koch-length").val());
-    if (isNaN(length)) {
+    if (isNaN(length) || length < 0) {
       length = 50;
     }
     return length;
