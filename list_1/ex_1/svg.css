@@ -4,24 +4,18 @@
   flex:2;
   height:900px;
   justify-content: center;
-  background: #f1f1f1;
-  border-top: solid 2px #333333;
-  border-right: solid 2px #333333;
-  border-bottom: solid 2px #333333;
+  background: #D3D3D3;
 }
 
-#inner {
-}
+#inner { }
 
 select {
   width: 100%;
-  /* width: 106px; */
   height: 40px;
 }
 
 input {
   width: 98%;
-  /* width: 100px; */
   height: 40px;
 }
 
@@ -44,4 +38,13 @@ button:hover {
 
 #clearCanvasButton {
     border-top: none;
+}
+
+#koch-creation-field {
+  display: flex;
+  align-items: center;
+  flex:2;
+  height:900px;
+  justify-content: center;
+  background: #D3D3D3;
 }

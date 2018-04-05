@@ -3,6 +3,9 @@
   max-height: 90vh;
   min-height: 90vh;
 }
+p {
+  font-size: 14px;
+}
 
 #board-container {
   width: 1600px;
@@ -36,18 +39,21 @@
   height: 5%;
   background-color: black;
   width:200px;
-  display: flex;
 }
-
+form {
+  width:100%;
+}
 #input-field {
-  flex: 7;
-  font-size: 10px;
-  /* height: 85% */
+  display:inline-block;
+  font-size: 14px;
+  width: 98%;
+  height: 50%
 }
 
 #send-button {
-  flex: 3;
-  width:30px;
+  display:inline-block;
+  height: 50%;
+  width:100%;
   background: #f1f1f1;
   border: solid 1px #333333;
 }

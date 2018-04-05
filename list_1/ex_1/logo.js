@@ -4,42 +4,42 @@ var bgColor = "#F1F1F1";
 
 /*
 todo:
-[]  TODO: skala
-[]  TODO: wyswietl zółwia
+[ ]  TODO: wyswietl zółwia
+[ ]  TODO: koch starting point
+[ ]  TODO: help - wyswietl komendy
+[ ]  TODO: wyglad
+[X]  TODO: floaty
+[ ]  TODO: meta (sprawdz liste)
 */
 
 $(document).ready(function() {
-  var commandCounter       = 0;
-  var pointer              = document.getElementById("turtle");
-  var sendButton           = document.getElementById("send-button");
-  var inputField           = document.getElementById("input-field");
-  var board                = document.getElementById("board");
-  var context              = board.getContext("2d");
-  var singleCommandsArray  = ["clear", "help", "start", "bounds"];
-  var doubleCommandsArray  = ["forward", "backward", "left", "right", "color", "background"];
-  var tripleCommandsArray  = ["move", "square", "circle", "triangle", "koch"];
-  var strokeColor          = "#000";
-  var shapesArray          = ["square", "circle", "triangle"];
+  var commandCounter           = 0;
+  var pointer                  = document.getElementById("turtle");
+  var sendButton               = document.getElementById("send-button");
+  var inputField               = document.getElementById("input-field");
+  var board                    = document.getElementById("board");
+  var context                  = board.getContext("2d");
+  var singleCommandsArray      = ["clear", "help", "bounds"];
+  var doubleCommandsArray      = ["forward", "backward", "left", "right", "color", "background"];
+  var tripleCommandsArray      = ["move", "square", "circle", "triangle", "koch"];
+  var strokeColor              = "#000";
+  var shapesArray              = ["square", "circle", "triangle", ""];
   var boundsExceededCorrection = true;
 
   var CANVAS_HEIGHT  = board.height;
   var CANVAS_WIDTH   = board.width;
   var VIRTUAL_WIDTH  = 2500;
-  var Y_CENTER;
-  var SCALE_RATIO;
-  var INITIAL_X_VALUE = CANVAS_WIDTH / 2;
-  var INITIAL_Y_VALUE = CANVAS_HEIGHT / 2;
   var NUMBERS_REGEX   = /^[0-9,.]*$/;
   var HEX_COLOR_REGEX = /#[0-9a-f]{6}|#[0-9a-f]{3}/gi;
 
-  var currentXPosition;//= computeX(INITIAL_X_VALUE);
-  var currentYPosition; //= computeY(INITIAL_Y_VALUE);
-  var oldX            ;// = currentXPosition;
-  var oldY            ; //= currentYPosition;
-  var currentAngle     = 0.0;
-  var MINIMUM_X = 0;
-  var MINIMUM_Y = 0
+  var currentXPosition;
+  var currentYPosition;
+  var oldX;
+  var oldY;
+  var currentAngle = 0.0;
 
+  var MINIMUM_X    = 0;
+  var MINIMUM_Y    = 0
   var MAXIMUM_X = 16000;
   var MAXIMUM_Y = 9000;
 
@@ -51,28 +51,15 @@ $(document).ready(function() {
     oldX             = currentXPosition;
     oldY             = currentYPosition;
     context.moveTo(computeX(currentXPosition), computeY(currentYPosition));
-    SCALE_RATIO      = board.width / 2500;
-    Y_CENTER         = board.height / 2;
-    createCircle(100, "#008800")
-    // currentXPosition = xRealToVirtual(INITIAL_X_VALUE);
-    // currentYPosition = yRealToVirtual(INITIAL_Y_VALUE);
-    // oldX             = currentXPosition;
-    // oldY             = currentYPosition;
-
+    if ($("#koch-creation-field").length > 0) {
+      move(MAXIMUM_X / 2, 0);
+    } else {
+      createCircle(100, "#008800");
+    }
   }
 
   $("#send-button").bind( "click", function(event) {
     performInputAction(inputField);
-  });
-
-  $("#debug").bind( "click", function(event) {
-    var x = 2000;
-    var newX = computeX(x);
-    console.log(newX);
-
-    var y = 2000;
-    var newY = computeY(y);
-    console.log(newY);
   });
 
   $('#input-field').keypress(function (event) {
@@ -121,13 +108,24 @@ $(document).ready(function() {
     }
   }
 
+  var checkIfShape = function(command) {
+    var notAShape = true;
+    for (i = 0; i < shapesArray.length; i++) {
+      if (command === shapesArray[i]) {
+        notAShape = false;
+      }
+    }
+    return notAShape;
+  }
+
   function validateInput(input) {
     var inputParts = input.split(" ");
     inputParts = filterArrayFromWhiteSpaces(inputParts);
     var command = inputParts[0];
     var valueRegex;
+    var notAShape = checkIfShape(command);
 
-    if (command !== "color" && command !== "background" && command !== "circle" && command !== "square" && command !== "rectangle") {
+    if (command !== "color" && command !== "background" && notAShape) {
       valueRegex = NUMBERS_REGEX;
     } else {
       valueRegex = HEX_COLOR_REGEX;
@@ -189,11 +187,7 @@ $(document).ready(function() {
       break;
 
       case "koch":
-        koch(value, value2);
-      break;
-
-      case "start":
-        start();
+        koch(value, value2/3);
       break;
 
       case "color":
@@ -228,19 +222,16 @@ $(document).ready(function() {
     var x = computeX(xValue)
     var y = computeY(yValue)
     context.moveTo(x, y);
-    // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}  px;`;
     createCircle(100, "#008800");
   }
 
   function moveAndDraw(value) {
-    // createCircle(10, "#008800");
     oldX = currentXPosition;
     oldY = currentYPosition;
 
     if (currentAngle === 0) {
 
       currentYPosition += value;
-      // currentYPosition = currentYPosition)
 
     } else if (currentAngle > 0 && currentAngle < 90) {
 
@@ -264,7 +255,7 @@ $(document).ready(function() {
 
     } else if (currentAngle === 180) {
 
-      currentYPosition += value;
+      currentYPosition -= value;
 
     } else if (currentAngle > 180 && currentAngle < 270) {
 
@@ -286,27 +277,18 @@ $(document).ready(function() {
       currentXPosition -= Math.abs(xTranslation);
       currentYPosition += Math.abs(yTranslation);
     }
+
     //TODO: check a case when bounds are exceeded
     if (boundsExceededCorrection) {
       currentXPosition = checkIfBoundsAreExceeded(currentXPosition, MAXIMUM_X);
       currentYPosition = checkIfBoundsAreExceeded(currentYPosition, MAXIMUM_Y);
     }
 
-    // currentXPosition = computeX(currentXPosition)
-    // currentYPosition = computeY(currentYPosition)
-
     context.beginPath();
-    // var a_oldX = xVirtualToReal(oldX);
-    // var a_oldY = yVirtualToReal(oldY);
-    var _oldX = computeX(oldX);
-    var _oldY = computeY(oldY);
-    context.moveTo(_oldX, _oldY);
-    // var newX = xVirtualToReal();
-    // var newY = yVirtualToReal(currentYPosition);
+    context.moveTo(computeX(oldX), computeY(oldY));
     context.lineTo(computeX(currentXPosition), computeY(currentYPosition));
     context.stroke();
     context.closePath();
-    // pointer.style = `left: ${currentXPosition}px; top: ${currentYPosition}px;`;
   }
 
   function checkDirectionAndMapMovementValue(value) {
@@ -334,44 +316,22 @@ $(document).ready(function() {
     context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
 
-  function start() {
-    context.moveTo(computeX(currentXPosition), computeY(currentYPosition));
-  }
-
   function showHelp() {
-    var guide = "1. Forward = 'forward [value]' <br>2. Backward = 'backward [value]'<br>3. Rotate = 'right [value]',<br> Rotate = 'left [value]'."
-    $("#commands-list").append("<p>" + guide + "</p>")
+    var guide = "Available commands: <br> "+
+    "1. move [value] [value]<br>2. forward [value]<br>3. backward [value]<br>4. left [value]<br>5. right [value]<br>" +
+    "6. color [#hex] <br> 7. bounds <br>8. clear<br>"+
+    "9. triangle [value] [#hex]<br>10. square [value] [#hex]<br> " +
+    "11. circle [value] [#hex] <br>12. background [#hex] <br> 13. koch [lvl] [value] <br>"
+    $("#commands-list").append("<p>" + guide + "</p>");
+    keepCommandListScrolledOnNewInput();
   }
 
   function computeX(x) {
-    // return x * (1 / SCALE_RATIO);
-    // return x * SCALE_RATIO;
-    return (x / MAXIMUM_X)*(CANVAS_WIDTH);
-  }
-
-  function xRealToVirtual(x) {
-    return (x * (1 / SCALE_RATIO));
-  }
-
-  function yRealToVirtual(y) {
-    return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO);
-  }
-
-  function xVirtualToReal(x) {
-    return x * SCALE_RATIO;
-  }
-
-  function yVirtualToReal(y) {
-    return ((y * SCALE_RATIO) + 2 * (Y_CENTER) - (y * SCALE_RATIO));
+    return (x-MINIMUM_X) / (MAXIMUM_X-MINIMUM_X)*(CANVAS_WIDTH);
   }
 
   function computeY(y) {
-    return CANVAS_HEIGHT - (y / MAXIMUM_Y)*(CANVAS_HEIGHT);
-    // var realY = y * SCALE_RATIO;
-    // return (realY + 2 * ((Y_CENTER) - realY));
-    // var realY = y * SCALE_RATIO;
-    // return (y + 2 * (Y_CENTER - y)) * (1 / SCALE_RATIO)
-
+    return CANVAS_HEIGHT-(y-MINIMUM_Y)/(MAXIMUM_Y-MINIMUM_Y) * (CANVAS_HEIGHT);
   }
 
   function clearScreen(context, bgColorString) {
@@ -431,7 +391,7 @@ $(document).ready(function() {
 
   function createSquare(value, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
-    moveAndDraw(-value);
+    moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(value);
     computeAngle(90);
@@ -444,7 +404,7 @@ $(document).ready(function() {
 
   function createRectangle(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
-    moveAndDraw(-value);
+    moveAndDraw(value);
     computeAngle(90);
     moveAndDraw(secondaryValue);
     computeAngle(90);
@@ -471,7 +431,7 @@ $(document).ready(function() {
 
   function createParallelogram(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
-    computeAngle(30); //right 30
+    computeAngle(30);
     moveAndDraw(value);
     computeAngle(60);
     moveAndDraw(secondaryValue);
@@ -486,15 +446,15 @@ $(document).ready(function() {
   function createHexagon(value, secondaryValue, colorHexValue) {
     changeStrokeColor(colorHexValue, false)
     computeAngle(60);
-    moveAndDraw(-value);
-    computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-60);
-    moveAndDraw(-value);
+    moveAndDraw(value);
+    computeAngle(-60);
+    moveAndDraw(value);
     computeAngle(-60);
     moveAndDraw(value);
     computeAngle(-120);
@@ -646,6 +606,12 @@ $(document).ready(function() {
                         KOCH
   *****************************************************/
 
+  var clearCanvas = function() {
+    context.globalCompositeOperation ="source-over";
+    context.fillStyle = bgColor;
+    context.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  }
+
   var getCanvasKochLevel = function() {
     var level = parseFloat($("#canvas-koch-level").val());
     if (isNaN(level)) {
@@ -685,15 +651,14 @@ $(document).ready(function() {
   }
 
   var createCanvasKoch = function() {
-    //TODO: starting position
     boundsExceededCorrection = false;
     var level  = getCanvasKochLevel();
     var length = getCanvasKochLength();
     var color  = getCanvasKochColor();
     changeStrokeColor(color, false);
-
     koch(level, length);
   }
 
   $("#create-canvas-koch").click(createCanvasKoch);
+  $("#clearCanvasButton").click(clearCanvas);
 });
