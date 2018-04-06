@@ -17,8 +17,8 @@
 
   <body>
       <canvas id="myCanvas" width="1000" height="500" style="width: 1000px;height: 500px;"></canvas>
-
       <script>
+
           var canvas= document.getElementById("myCanvas");
           var context = canvas.getContext("2d");
           var strokeStyle = "black";
@@ -45,6 +45,19 @@
             [5,6], [6,7], [7,8], [8,5],
             [1,5], [2,6], [3,7], [4,8],
           ];
+
+          var obstaclesList = [];
+          let doorsList     = [];
+          var randomInteger = function() {
+            return Math.floor(Math.random() * 9) + 1;
+          }
+
+
+          function start() {
+            generateObstacles();
+            draw();
+          }
+          start();
 
           function transform3Dto2D(vertices) {
               let x;
@@ -87,11 +100,7 @@
             context.stroke();
           }
 
-          createArea(areaVertices, edges);
-          renderCharacter();
-
-
-          function renderCharacter() {
+          function createCharacter() {
             context.beginPath();
             context.strokeStyle = "red";
             let vertices1 = transform3Dto2D(character.vertices);
@@ -110,21 +119,70 @@
             context.stroke();
           }
 
-
           function draw() {
               context.clearRect(0,0,1500,500);
-
+              createArea(areaVertices, edges);
+              createCharacter();
+              createObstacles();
           }
 
           function moveLeft() {
-
+            if (character.x > 1) {
+              for (let i = 0; i < character.vertices.length; i++) {
+                 character.vertices[i][0] -= 100;// x value
+              }
+              character.x--;
+            }
+            draw();
           }
 
           function moveRight() {
+            if (character.x < 9) {
+              for (let i = 0; i < character.vertices.length; i++) {
+                 character.vertices[i][0] += 100;// x value
+              }
+              character.x++;
+            }
+            draw();
           }
 
-          function moveForward() {
+          function createObstacles() {
+            for (let i = 0; i < obstaclesList.length; i++) {
+              verticesList = obstaclesList[i];
+              createArea(verticesList, edges);
+            }
+          }
 
+          function generateObstacles() {
+            for (let i = 2; i <= 6; i+=2) {
+              generateObstacle(i);
+            }
+          }
+
+          function generateObstacle(z) {
+            let doorStartX = randomInteger();
+            let verticesList = [];
+            doorsList.push(doorStartX);
+
+            if (doorStartX > 1) {
+              let x = doorStartX*100-100;
+              verticesList = [
+                [0,300,z+1], [x,300,z+1], [x,500,z+1], [0,500,z+1], // 1, 2, 3, 4
+                [0,300,z], [x,300,z], [x,500,z], [0,500,z]
+              ]
+              //create wall
+              obstaclesList.push(verticesList);
+            }
+
+            if (doorStartX < 9) {
+              let x = doorStartX*100+100;
+              verticesList = [
+                [x,300,z+1], [canvas.width,300,z+1], [canvas.width,500,z+1], [x,500,z+1], // 1, 2, 3, 4
+                [x,300,z], [canvas.width,300,z], [canvas.width,500,z], [x,500,z]
+              ]
+              //create wall
+              obstaclesList.push(verticesList);
+            }
           }
 
           document.addEventListener("keypress", function(e) {
@@ -137,19 +195,15 @@
                       console.log("left")
                       break;
                   case 119: //up
-                      moveLeft();
+                      moveObstacles();
                       console.log("up")
                       break;
                   case 100: //right
-                      moveLeft();
+                      moveRight();
                       console.log("right")
                       break;
               }
-
-
           });
-
-
       </script>
   </body>
 
