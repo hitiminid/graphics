@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Zadanie 4</title>1
+    <script src="wireframe.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+  <body>
+      <canvas id="myCanvas" width="1000" height="500" style="width: 1000px;height: 500px;"></canvas>
+
+      <script>
+          var canvas= document.getElementById("myCanvas");
+          var context = canvas.getContext("2d");
+          var strokeStyle = "black";
+          var camera = {};
+          //camera setting
+          camera.x = canvas.width / 2;
+          camera.y = 0.0;
+          camera.z = 0.0;
+          var character = {};
+          character.x = canvas.width / 200;
+          character.y = canvas.height;
+          character.vertices = [
+            [450,400,1.25], [550,400,1.25], [550,500,1.25], [450,500,1.25], // 1, 2, 3, 4
+            [450,400,1], [550,400,1], [550,500,1], [450,500,1], // 5, 6, 7, 8
+          ];
+
+          var areaVertices = [
+            [0,0,10], [canvas.width,0,10], [canvas.width,canvas.height,10], [0,canvas.height,10], // 1, 2, 3, 4
+            [0,0,1],  [canvas.width,0,1],  [canvas.width,canvas.height,1 ], [0,canvas.height,1],  // 5, 6, 7, 8
+          ];
+
+          var edges = [
+            [1,2], [2,3], [3,4], [4,1],
+            [5,6], [6,7], [7,8], [8,5],
+            [1,5], [2,6], [3,7], [4,8],
+          ];
+
+          function transform3Dto2D(vertices) {
+              let x;
+              let y;
+              let vertex;
+              let transformTemp;
+              let resultMatrix = [];
+              let newVertex;
+
+              for (let i = 0; i < vertices.length; i++) {
+                vertex = vertices[i] // x , y, z
+                transformTemp = vertex[2]; // z
+
+                x = (vertex[0] - camera.x) * ( 1.0 / transformTemp) + camera.x;
+                y = (vertex[1] - camera.y) * ( 1.0 / transformTemp) + camera.y;
+
+                newVertex = [x, y];
+                resultMatrix.push(newVertex);
+              }
+              return resultMatrix;
+          }
+
+
+          function createArea(vertices, edges) {
+            context.beginPath();
+            context.strokeStyle = "black";
+            let vertices1 = transform3Dto2D(vertices);
+            let startPoint;
+            let endPoint;
+            let e;
+            let v;
+
+            for (let i = 0; i < edges.length; i++) {
+              e = edges[i];
+              v = vertices1[e[0]-1]; // e[0] - starting vertex
+              context.moveTo(v[0], v[1]); // move to starting point
+              v = vertices1[e[1]-1];
+              context.lineTo(v[0], v[1]); // move to starting point
+            }
+            context.stroke();
+          }
+
+          createArea(areaVertices, edges);
+          renderCharacter();
+
+
+          function renderCharacter() {
+            context.beginPath();
+            context.strokeStyle = "red";
+            let vertices1 = transform3Dto2D(character.vertices);
+            let startPoint;
+            let endPoint;
+            let e;
+            let v;
+
+            for (let i = 0; i < edges.length; i++) {
+              e = edges[i];
+              v = vertices1[e[0]-1]; // e[0] - starting vertex
+              context.moveTo(v[0], v[1]); // move to starting point
+              v = vertices1[e[1]-1];
+              context.lineTo(v[0], v[1]); // move to starting point
+            }
+            context.stroke();
+          }
+
+
+          function draw() {
+              context.clearRect(0,0,1500,500);
+
+          }
+
+          function moveLeft() {
+
+          }
+
+          function moveRight() {
+          }
+
+          function moveForward() {
+
+          }
+
+          document.addEventListener("keypress", function(e) {
+              e.preventDefault();
+              var code =  e.keyCode;
+
+              switch(code) {
+                  case 97: //left
+                      moveLeft();
+                      console.log("left")
+                      break;
+                  case 119: //up
+                      moveLeft();
+                      console.log("up")
+                      break;
+                  case 100: //right
+                      moveLeft();
+                      console.log("right")
+                      break;
+              }
+
+
+          });
+
+
+      </script>
+  </body>
+
+</html>
